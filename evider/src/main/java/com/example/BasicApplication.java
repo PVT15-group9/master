@@ -9,4 +9,8 @@ public class BasicApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BasicApplication.class, args);
 	}
+        
+        public static void test() {
+            System.out.println("foo bar baz");
+        }
 }
