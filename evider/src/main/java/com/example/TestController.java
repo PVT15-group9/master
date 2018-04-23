@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @RequestMapping("/")
-    public String defaultView() {
-        return "This is the default view for group 09!";
+    public String defaultRoute() {
+        return "This is the default route for group 09!";
     }
     
     @RequestMapping("/sayHello")
