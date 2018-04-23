@@ -20,4 +20,9 @@ public class TestController {
     public String goodBye() {
         return "Good bye from group 09!";
     }
+    
+    @RequestMapping("/test")
+    public String test() {
+        return "A late night test!";
+    }
 }
