@@ -4,12 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>basic</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>evider</artifactId>
     <packaging>war</packaging>
 
-    <name>basic</name>
-    <description>Basic project for Spring Boot</description>
+    <name>evider</name>
+    <description>PVT15 VT2018 Group 9 - Evider</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
