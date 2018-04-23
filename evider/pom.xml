@@ -5,6 +5,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>evider</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>evider</name>
