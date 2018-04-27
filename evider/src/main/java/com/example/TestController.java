@@ -12,10 +12,12 @@ public class TestController {
     }
     
     @RequestMapping("/sayHello")
-    public String greeting() {
-        return "Hello from 9!";
+    public String greeting(@RequestParam(value="name", defaultValue="World") String name) {
+        String hello = "Hello ";
+        String from = " from group 09!";
+        String retString = hello+name+from;
+        return retString;
     }
-    
     @RequestMapping("/sayGoodBye")
     public String goodBye() {
         return "Good bye from group 09!";
