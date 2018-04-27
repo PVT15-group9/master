@@ -13,11 +13,9 @@ public class TestController {
     }
     
     @RequestMapping("/sayHello")
-    public String greeting(@RequestParam(value="name", defaultValue="World") String name) {
-        String hello = "Hello ";
-        String from = " from group 09!";
-        String retString = hello+name+from;
-        return retString;
+    public String greeting() {
+        String ret = "Hello from Group 9!;
+        return ret;
     }
     
     @RequestMapping("/sayGoodBye")
