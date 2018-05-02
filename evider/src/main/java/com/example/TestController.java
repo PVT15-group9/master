@@ -50,6 +50,15 @@ public class TestController {
         return sw.toString();
     }
 
+    @RequestMapping("/venues")
+    public String getVenues() {
+        cxn = db.connect();
+        String sql = "SELECT * FROM venues";
+        String json = this.executeQueryAndPrintResult(sql);
+        db.disconnect();
+        return json;
+    }
+
     @RequestMapping("/events")
     public String getEvents() {
         cxn = db.connect();
