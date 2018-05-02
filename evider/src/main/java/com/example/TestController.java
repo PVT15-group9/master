@@ -1,9 +1,5 @@
 package com.example;
 
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.module.*;
-import com.fasterxml.jackson.databind.node.*;
-import java.io.*;
 import java.sql.*;
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,22 +12,20 @@ public class TestController {
 
     //private DBConnection db = new DBConnection();
     private MySQLConnect db = new MySQLConnect();
+    private Connection cxn = null;
+
+    public TestController() {
+        cxn = db.connect();
+    }
+
+    @RequestMapping("/venues")
+    public String getVenues() {
+
+        return "";
+    }
 
     @RequestMapping("/events")
     public String getEvents() {
-
-        Connection cxn = null;
-
-        try {
-            cxn = db.connect();
-        } catch (Exception e) {
-            String output = "Something went wrong<br>";
-            output += "Thrown by " + e.getClass().getName();
-            output += "<br><br><pre>";
-            output += e.toString();
-            output += "</pre>";
-            return output;
-        }
 
         ResultSet result = null;
         Statement statement = null;
@@ -41,40 +35,12 @@ public class TestController {
             statement = cxn.createStatement();
             result = statement.executeQuery(sql);
         } catch (SQLException e) {
-            String output = "Something went wrong @44<br>";
-            output += "Thrown by " + e.getClass().getName();
-            output += "<br><br><pre>";
-            output += e.toString();
-            output += "</pre>";
-            return output;
-        }
-
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(new ResultSetSerializer());
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(module);
-
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        // put the resultset in a containing structure
-        objectNode.putPOJO("results", result);
-
-        // generate all
-        StringWriter sw = new StringWriter();
-        try {
-            objectMapper.writeValue(sw, objectNode);
-        } catch (IOException e) {
-            String output = "Something went wrong @67<br>";
-            output += "Thrown by " + e.getClass().getName();
-            output += "<br><br><pre>";
-            output += e.toString();
-            output += "</pre>";
-            return output;
+            return IOHelper.writeException(e);
         }
 
         db.disconnect();
 
-        return sw.toString();
+        return IOHelper.serializeResultSet(result);
     }
 
     @RequestMapping("/")
