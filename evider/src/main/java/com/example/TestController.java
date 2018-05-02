@@ -36,7 +36,7 @@ public class TestController {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(module);
-        
+
         ResultSet result = null;
         Statement statement = null;
         String sql = "SELECT * FROM events";
@@ -48,8 +48,6 @@ public class TestController {
             return IOHelper.writeException(e);
         }
 
-        db.disconnect();
-        
         ObjectNode objectNode = objectMapper.createObjectNode();
         // put the resultset in a containing structure
         objectNode.putPOJO("results", result);
@@ -61,7 +59,8 @@ public class TestController {
         } catch (IOException e) {
             return IOHelper.writeException(e);
         }
-
+        
+        db.disconnect();
         return sw.toString();
         // return IOHelper.serializeResultSet(result);
     }
