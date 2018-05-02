@@ -44,15 +44,11 @@ public class TestController {
             statement.close();
             db.disconnect();
 
-            return sw.toString();
+            return "Output : " + sw.toString();
             
-        } catch (SQLException sqex) {
+        } catch (SQLException | IOException ex) {
             System.out.println("Something went wrong...");
-            sqex.printStackTrace();
-            return "";
-        } catch (IOException ioex) {
-            System.out.println("Something went wrong...");
-            ioex.printStackTrace();
+            ex.printStackTrace();
             return "";
         }
     }
