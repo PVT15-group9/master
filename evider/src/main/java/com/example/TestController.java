@@ -14,50 +14,67 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    private DBConnection db = new DBConnection();
+    //private DBConnection db = new DBConnection();
+    private MySQLConnect db = new MySQLConnect();
 
     @RequestMapping("/events")
     public String getEvents() {
 
+        Connection cxn = null;
+
         try {
-            Connection cxn = db.connect();
-
-            SimpleModule module = new SimpleModule();
-            module.addSerializer(new ResultSetSerializer());
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(module);
-
-            String query = "SELECT * FROM events";
-            Statement statement = cxn.createStatement();
-            ResultSet result = statement.executeQuery(query);
-
-            ObjectNode objectNode = objectMapper.createObjectNode();
-            // put the resultset in a containing structure
-            objectNode.putPOJO("results", result);
-
-            // generate all
-            StringWriter sw = new StringWriter();
-            objectMapper.writeValue(sw, objectNode);
-
-            result.close();
-            statement.close();
-            db.disconnect();
-
-            return sw.toString();
-
-        } catch (SQLException | IOException | IllegalStateException ex) {
-            StringWriter sw = new StringWriter(); // create a StringWriter
-            PrintWriter pw = new PrintWriter(sw); // create a PrintWriter using this string writer instance
-            ex.printStackTrace(pw); // print the stack trace to the print writer(it wraps the string writer sw
-            
+            cxn = db.connect();
+        } catch (Exception e) {
             String output = "Something went wrong<br>";
-            output += "Thrown by " + ex.getClass().getName();
+            output += "Thrown by " + e.getClass().getName();
             output += "<br><br><pre>";
-            output += sw.toString();
+            output += e.toString();
             output += "</pre>";
             return output;
         }
+
+        ResultSet result = null;
+        Statement statement = null;
+        String sql = "SELECT * FROM events";
+
+        try {
+            statement = cxn.createStatement();
+            result = statement.executeQuery(sql);
+        } catch (SQLException e) {
+            String output = "Something went wrong @44<br>";
+            output += "Thrown by " + e.getClass().getName();
+            output += "<br><br><pre>";
+            output += e.toString();
+            output += "</pre>";
+            return output;
+        }
+
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(new ResultSetSerializer());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(module);
+
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        // put the resultset in a containing structure
+        objectNode.putPOJO("results", result);
+
+        // generate all
+        StringWriter sw = new StringWriter();
+        try {
+            objectMapper.writeValue(sw, objectNode);
+        } catch (IOException e) {
+            String output = "Something went wrong @67<br>";
+            output += "Thrown by " + e.getClass().getName();
+            output += "<br><br><pre>";
+            output += e.toString();
+            output += "</pre>";
+            return output;
+        }
+
+        db.disconnect();
+
+        return sw.toString();
     }
 
     @RequestMapping("/")
