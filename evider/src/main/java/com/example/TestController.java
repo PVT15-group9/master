@@ -1,5 +1,6 @@
 package com.example;
-
+import org.springframework.web.bind.annotation.RequestParam;
+ 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,10 +17,12 @@ public class TestController {
     }
     
     @RequestMapping("/sayHello")
-    public String greeting() {
-        return "Hello from group 09!";
+    public String greeting(@RequestParam(value="name", defaultValue="World") String name) {
+        String hello = "Hello ";
+        String from = " from group 09!";
+        String retString = hello+name+from;
+        return retString;
     }
-    
     @RequestMapping("/sayGoodBye")
     public String goodBye() {
         return "Good bye from group 09!";
