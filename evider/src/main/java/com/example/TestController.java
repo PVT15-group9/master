@@ -31,12 +31,6 @@ public class TestController {
     @RequestMapping("/events")
     public String getEvents() {
 
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(new ResultSetSerializer());
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(module);
-
         ResultSet result = null;
         Statement statement = null;
         String sql = "SELECT * FROM events";
@@ -48,21 +42,11 @@ public class TestController {
             return IOHelper.writeException(e);
         }
 
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        // put the resultset in a containing structure
-        objectNode.putPOJO("results", result);
+        String json = IOHelper.serializeResultSet(result);
 
-        // generate all
-        StringWriter sw = new StringWriter();
-        try {
-            objectMapper.writeValue(sw, objectNode);
-        } catch (IOException e) {
-            return IOHelper.writeException(e);
-        }
-        
         db.disconnect();
-        return sw.toString();
-        // return IOHelper.serializeResultSet(result);
+
+        return json;
     }
 
     @RequestMapping("/")
