@@ -8,7 +8,7 @@ import java.sql.*;
  */
 public class DBConnection {
 
-    public Connection DBConnection() {
+    public Connection connect() {
         String url = "jdbc:mysql://localhost:3306/bekn5739";
         String username = "bekn5739";
         String password = "iw8seeCh8ag9";
@@ -21,6 +21,10 @@ public class DBConnection {
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
         }
+    }
+    
+    public void disconnect() {
+        // 
     }
 
 }
