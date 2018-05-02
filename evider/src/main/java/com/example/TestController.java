@@ -20,6 +20,8 @@ public class TestController {
     public String getEvents() {
 
         try {
+            Connection cxn = db.connect();
+
             SimpleModule module = new SimpleModule();
             module.addSerializer(new ResultSetSerializer());
 
@@ -27,8 +29,6 @@ public class TestController {
             objectMapper.registerModule(module);
 
             String query = "SELECT * FROM events";
-
-            Connection cxn = db.connect();
             Statement statement = cxn.createStatement();
             ResultSet result = statement.executeQuery(query);
 
@@ -44,15 +44,19 @@ public class TestController {
             statement.close();
             db.disconnect();
 
-            return "Output : " + sw.toString();
+            return sw.toString();
 
-        } catch (SQLException | IOException ex) {
-            // ex.printStackTrace();
-            StringWriter sw = new StringWriter();//create a StringWriter
-            PrintWriter pw = new PrintWriter(sw);//create a PrintWriter using this string writer instance
-            ex.printStackTrace(pw);//print the stack trace to the print writer(it wraps the string writer sw)
-            String s = sw.toString(); // we can now have the stack trace as a string
-            return "Something went wrong...\n\n" + s;
+        } catch (SQLException | IOException | IllegalStateException ex) {
+            StringWriter sw = new StringWriter(); // create a StringWriter
+            PrintWriter pw = new PrintWriter(sw); // create a PrintWriter using this string writer instance
+            ex.printStackTrace(pw); // print the stack trace to the print writer(it wraps the string writer sw
+            
+            String output = "Something went wrong<br>";
+            output += "Thrown by " + ex.getClass().getName();
+            output += "<br><br><pre>";
+            output += sw.toString();
+            output += "</pre>";
+            return output;
         }
     }
 
