@@ -1,9 +1,13 @@
 package com.example;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.sql.*;
 
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +31,12 @@ public class TestController {
     @RequestMapping("/events")
     public String getEvents() {
 
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(new ResultSetSerializer());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(module);
+        
         ResultSet result = null;
         Statement statement = null;
         String sql = "SELECT * FROM events";
@@ -39,8 +49,21 @@ public class TestController {
         }
 
         db.disconnect();
+        
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        // put the resultset in a containing structure
+        objectNode.putPOJO("results", result);
 
-        return IOHelper.serializeResultSet(result);
+        // generate all
+        StringWriter sw = new StringWriter();
+        try {
+            objectMapper.writeValue(sw, objectNode);
+        } catch (IOException e) {
+            return IOHelper.writeException(e);
+        }
+
+        return sw.toString();
+        // return IOHelper.serializeResultSet(result);
     }
 
     @RequestMapping("/")
