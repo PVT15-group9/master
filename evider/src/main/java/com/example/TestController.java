@@ -48,7 +48,11 @@ public class TestController {
 
         } catch (SQLException | IOException ex) {
             // ex.printStackTrace();
-            return "Something went wrong...";
+            StringWriter sw = new StringWriter();//create a StringWriter
+            PrintWriter pw = new PrintWriter(sw);//create a PrintWriter using this string writer instance
+            ex.printStackTrace(pw);//print the stack trace to the print writer(it wraps the string writer sw)
+            String s = sw.toString(); // we can now have the stack trace as a string
+            return "Something went wrong...\n\n" + s;
         }
     }
 
