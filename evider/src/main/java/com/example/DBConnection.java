@@ -9,7 +9,7 @@ import java.sql.*;
 public class DBConnection {
 
     public Connection connect() {
-        String url = "jdbc:mysql://localhost:3306/bekn5739";
+        String url = "jdbc:mysql://mysql.dsv.su.se:3306/bekn5739";
         String username = "bekn5739";
         String password = "iw8seeCh8ag9";
 
