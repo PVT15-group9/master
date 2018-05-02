@@ -18,22 +18,15 @@ public class TestController {
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
 
-    public TestController() {
-        cxn = db.connect();
-    }
+    private String executeQueryAndPrintResult(String sql) {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(new ResultSetSerializer());
 
-    @RequestMapping("/venues")
-    public String getVenues() {
-
-        return "";
-    }
-
-    @RequestMapping("/events")
-    public String getEvents() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(module);
 
         ResultSet result = null;
         Statement statement = null;
-        String sql = "SELECT * FROM events";
 
         try {
             statement = cxn.createStatement();
@@ -42,10 +35,27 @@ public class TestController {
             return IOHelper.writeException(e);
         }
 
-        String json = IOHelper.serializeResultSet(result);
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        // put the resultset in a containing structure
+        objectNode.putPOJO("results", result);
 
+        // generate all
+        StringWriter sw = new StringWriter();
+        try {
+            objectMapper.writeValue(sw, objectNode);
+        } catch (IOException e) {
+            return IOHelper.writeException(e);
+        }
+
+        return sw.toString();
+    }
+
+    @RequestMapping("/events")
+    public String getEvents() {
+        cxn = db.connect();
+        String sql = "SELECT * FROM events";
+        String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
-
         return json;
     }
 
