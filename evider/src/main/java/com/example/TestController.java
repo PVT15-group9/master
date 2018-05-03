@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
+import java.util.Base64;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,7 +71,15 @@ public class TestController {
 
     @RequestMapping("/jwt")
     public String jwtTest() {
-        
-        return "";
+        //cxn = db.connect();
+
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
+        String payload = token.split("\\.")[1];
+        byte[] decodedBytes = Base64.getDecoder().decode(payload);
+        String decodedString = new String(decodedBytes);
+
+        //db.disconnect();
+
+        return decodedString;
     }
 }
