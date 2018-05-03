@@ -87,7 +87,7 @@ public class TestController {
         try {
             DecodedJWT jwtUnverified = JWT.decode(token);
             String iss = jwtUnverified.getIssuer();
-            
+
             System.out.print("The issuer from the JWT : " + iss + "<br><br>");
 
             String sql = "SELECT secret FROM api_secrets WHERE username = ?";
