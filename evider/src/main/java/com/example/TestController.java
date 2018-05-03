@@ -87,6 +87,8 @@ public class TestController {
         try {
             DecodedJWT jwtUnverified = JWT.decode(token);
             String iss = jwtUnverified.getIssuer();
+            
+            System.out.print("The issuer from the JWT : " + iss + "<br><br>");
 
             String sql = "SELECT secret FROM api_secrets WHERE username = ?";
             PreparedStatement stmt = cxn.prepareStatement(sql);
@@ -107,6 +109,8 @@ public class TestController {
             } else {
                 // error msg
             }
+
+            stmt.close();
         } catch (UnsupportedEncodingException e) {
             return "Unsupported encoding!<br><br>" + IOHelper.writeException(e);
         } catch (JWTVerificationException e) {
