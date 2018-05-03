@@ -1,14 +1,18 @@
 package com.example;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.*;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
-import java.util.Base64;
 
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,6 +55,11 @@ public class TestController {
         return sw.toString();
     }
 
+    @RequestMapping("/")
+    public String troll() {
+        return "All your scrum are belong to us";
+    }
+
     @RequestMapping("/venues")
     public String getVenues() {
         cxn = db.connect();
@@ -71,15 +80,42 @@ public class TestController {
 
     @RequestMapping("/jwt")
     public String jwtTest() {
-        //cxn = db.connect();
+        cxn = db.connect();
 
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
-        String payload = token.split("\\.")[1];
-        byte[] decodedBytes = Base64.getDecoder().decode(payload);
-        String decodedString = new String(decodedBytes);
 
-        //db.disconnect();
+        try {
+            DecodedJWT jwtUnverified = JWT.decode(token);
+            String iss = jwtUnverified.getIssuer();
 
-        return decodedString;
+            String sql = "SELECT secret FROM api_secrets WHERE username = ?";
+            PreparedStatement stmt = cxn.prepareStatement(sql);
+            stmt.setString(1, iss);
+            ResultSet rs = stmt.executeQuery(sql);
+
+            String secret = null;
+
+            while (rs.next()) {
+                secret = rs.getString("secret");
+            }
+
+            if (secret != null) {
+                Algorithm algorithm = Algorithm.HMAC256(secret);
+                JWTVerifier verifier = JWT.require(algorithm)
+                        .build(); //Reusable verifier instance
+                DecodedJWT jwt = verifier.verify(token);
+            } else {
+                // error msg
+            }
+        } catch (UnsupportedEncodingException e) {
+            return "Unsupported encoding!<br><br>" + IOHelper.writeException(e);
+        } catch (JWTVerificationException e) {
+            return "JWT could not be verified!<br><br>" + IOHelper.writeException(e);
+        } catch (SQLException e) {
+            return "SQL went wrong!<br><br>" + IOHelper.writeException(e);
+        }
+
+        db.disconnect();
+        return "All good! :)";
     }
 }
