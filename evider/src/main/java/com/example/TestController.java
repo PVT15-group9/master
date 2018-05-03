@@ -93,7 +93,7 @@ public class TestController {
             String sql = "SELECT secret FROM api_secrets WHERE username = ?";
             PreparedStatement stmt = cxn.prepareStatement(sql);
             stmt.setString(1, iss);
-            ResultSet rs = stmt.executeQuery(sql);
+            ResultSet rs = stmt.executeQuery();
 
             String secret = null;
 
@@ -112,11 +112,11 @@ public class TestController {
 
             stmt.close();
         } catch (UnsupportedEncodingException e) {
-            return "Unsupported encoding!<br><br>" + IOHelper.writeException(e);
+            return "Unsupported encoding!<br>" + IOHelper.writeException(e);
         } catch (JWTVerificationException e) {
-            return "JWT could not be verified!<br><br>" + IOHelper.writeException(e);
+            return "JWT could not be verified!<br>" + IOHelper.writeException(e);
         } catch (SQLException e) {
-            return "SQL went wrong!<br><br>" + IOHelper.writeException(e);
+            return "SQL went wrong!<br>" + IOHelper.writeException(e);
         }
 
         db.disconnect();
