@@ -58,6 +58,6 @@ public class JWTDecoder {
             return "SQL went wrong!<br>" + IOHelper.writeException(e);
         }
 
-        return "All good! This is the token that was sent in:<br><pre>" + jwt + "</pre>";
+        return "All good! This is payload of the token that was received:<br><pre>" + jwt.getPayload() + "</pre>";
     }
 }
