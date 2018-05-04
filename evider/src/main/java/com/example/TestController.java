@@ -80,10 +80,15 @@ public class TestController {
     }
 
     @RequestMapping("/jwtSharp")
-    public String jwtTest(@RequestHeader("Authorization") String token) {
-        return token;
-        //JWTDecoder jwtDecoder = new JWTDecoder();
-        //return jwtDecoder.decode(token);
+    public String jwtTest(@RequestHeader("Authorization") String authHeader) {
+        if(authHeader.length() < 7) {
+            return "Invalid Authorization header!";
+        }
+        if(!authHeader.substring(0, 7).equals("Bearer ")) {
+            return "Malformed Authorization header";
+        }
+        JWTDecoder jwtDecoder = new JWTDecoder();
+        return jwtDecoder.decode(authHeader.substring(7));
     }
 
     @RequestMapping("/jwt")
