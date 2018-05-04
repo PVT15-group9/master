@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.*;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -78,11 +79,23 @@ public class TestController {
         return json;
     }
 
+    @RequestMapping("/jwtSharp")
+    public String jwtTest(@RequestHeader("Authorization") String token) {
+        return token;
+        //JWTDecoder jwtDecoder = new JWTDecoder();
+        //return jwtDecoder.decode(token);
+    }
+
     @RequestMapping("/jwt")
     public String jwtTest() {
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
+        JWTDecoder jwtDecoder = new JWTDecoder();
+        return jwtDecoder.decode(token);
+        
+        /*
         cxn = db.connect();
 
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
 
         try {
             DecodedJWT jwtUnverified = JWT.decode(token);
@@ -121,5 +134,6 @@ public class TestController {
 
         db.disconnect();
         return "All good! :)";
+         */
     }
 }
