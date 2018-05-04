@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
 
 /**
  *
@@ -46,7 +48,7 @@ public class JWTDecoder {
                         .build(); //Reusable verifier instance
                 jwt = verifier.verify(token);
             } else {
-                // error msg
+                return "Could not verify the issuer of the token";
             }
 
             stmt.close();
@@ -58,6 +60,6 @@ public class JWTDecoder {
             return "SQL went wrong!<br>" + IOHelper.writeException(e);
         }
 
-        return "All good! This is payload of the token that was received:<br><pre>" + jwt.getPayload() + "</pre>";
+        return "All good! This is payload of the token that was received:<br><pre>" + StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload())) + "</pre>";
     }
 }
