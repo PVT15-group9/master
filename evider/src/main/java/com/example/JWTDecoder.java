@@ -22,7 +22,7 @@ public class JWTDecoder {
 
     public String decode(String token) {
         cxn = db.connect();
-
+        DecodedJWT jwt = null;
         try {
             DecodedJWT jwtUnverified = JWT.decode(token);
             String iss = jwtUnverified.getIssuer();
@@ -44,7 +44,7 @@ public class JWTDecoder {
                 Algorithm algorithm = Algorithm.HMAC256(secret);
                 JWTVerifier verifier = JWT.require(algorithm)
                         .build(); //Reusable verifier instance
-                DecodedJWT jwt = verifier.verify(token);
+                jwt = verifier.verify(token);
             } else {
                 // error msg
             }
@@ -57,7 +57,7 @@ public class JWTDecoder {
         } catch (SQLException e) {
             return "SQL went wrong!<br>" + IOHelper.writeException(e);
         }
-        
-        return "All good!";
+
+        return "All good! This is the token that was sent in:<br><pre>" + jwt + "</pre>";
     }
 }
