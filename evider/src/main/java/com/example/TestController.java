@@ -90,4 +90,9 @@ public class TestController {
         JWTDecoder jwtDecoder = new JWTDecoder();
         return jwtDecoder.decode(token);
     }
+    
+    @RequestMapping("/test2")
+    public String test2() {
+        return "This is just another test";
+    }
 }
