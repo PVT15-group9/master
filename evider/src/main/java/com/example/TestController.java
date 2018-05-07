@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,6 +71,7 @@ public class TestController {
         return json;
     }
 
+    @CrossOrigin()
     @RequestMapping("/jwtSharp")
     public String jwtTest(@RequestHeader("Authorization") String authHeader) {
         if(authHeader.length() < 7) {
