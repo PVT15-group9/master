@@ -81,14 +81,24 @@ public class TestController {
             return "Malformed Authorization header";
         }
         JWTDecoder jwtDecoder = new JWTDecoder();
-        return jwtDecoder.decode(authHeader.substring(7));
+        boolean decoded = jwtDecoder.decode(authHeader.substring(7));
+        if(decoded) {
+            return "{\"result\" : \"success\"}";
+        } else {
+            return "{\"result\" : \"fail\"}";
+        }
     }
 
     @RequestMapping("/jwt")
     public String jwtTest() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
         JWTDecoder jwtDecoder = new JWTDecoder();
-        return jwtDecoder.decode(token);
+        boolean decoded = jwtDecoder.decode(token);
+        if(decoded) {
+            return "{\"result\" : \"success\"}";
+        } else {
+            return "{\"result\" : \"fail\"}";
+        }
     }
     
     @RequestMapping("/test2")

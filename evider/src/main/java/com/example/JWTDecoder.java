@@ -22,13 +22,14 @@ public class JWTDecoder {
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
 
-    public String decode(String token) {
+    public boolean decode(String token) {
         cxn = db.connect();
-        DecodedJWT jwt = null;
+        DecodedJWT jwt;
         try {
             DecodedJWT jwtUnverified = JWT.decode(token);
             String iss = jwtUnverified.getIssuer();
 
+            // this should be fetched from application.properties
             String sql = "SELECT secret FROM api_secrets WHERE username = ?";
             PreparedStatement stmt = cxn.prepareStatement(sql);
             stmt.setString(1, iss);
@@ -46,19 +47,28 @@ public class JWTDecoder {
                         .build(); //Reusable verifier instance
                 jwt = verifier.verify(token);
             } else {
-                return "Could not verify the issuer of the token";
+                // log the error!
+                return false;
+                //return "Could not verify the issuer of the token";
             }
 
             stmt.close();
         } catch (UnsupportedEncodingException e) {
-            return "Unsupported encoding!<br>" + IOHelper.writeException(e);
+            // log the error!
+            return false;
+            //return "Unsupported encoding!<br>" + IOHelper.writeException(e);
         } catch (JWTVerificationException e) {
-            return "JWT could not be verified!<br>" + IOHelper.writeException(e);
+            // log the error!
+            return false;
+            //return "JWT could not be verified!<br>" + IOHelper.writeException(e);
         } catch (SQLException e) {
-            return "SQL went wrong!<br>" + IOHelper.writeException(e);
+            // log the error!
+            return false;
+            //return "SQL went wrong!<br>" + IOHelper.writeException(e);
         }
 
-        return StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload()));
+        return true;
+        //return StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload()));
         //return "All good! This is payload of the token that was received:<br><pre>" + StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload())) + "</pre>";
     }
 }
