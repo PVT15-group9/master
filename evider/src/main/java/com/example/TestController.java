@@ -13,8 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TestController {
+
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
+    private static final String version = "/api/v1/";
+
+    @RequestMapping(version + "venues")
+    public String getVenues2() {
+        return "{\"foo\" : \"bar\", \"from\" : \"venues\"}";
+    }
 
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
@@ -74,15 +81,15 @@ public class TestController {
     @CrossOrigin
     @RequestMapping("/jwtSharp")
     public String jwtTest(@RequestHeader("Authorization") String authHeader) {
-        if(authHeader.length() < 7) {
+        if (authHeader.length() < 7) {
             return "Invalid Authorization header!";
         }
-        if(!authHeader.substring(0, 7).equals("Bearer ")) {
+        if (!authHeader.substring(0, 7).equals("Bearer ")) {
             return "Malformed Authorization header";
         }
         JWTDecoder jwtDecoder = new JWTDecoder();
         boolean decoded = jwtDecoder.decode(authHeader.substring(7));
-        if(decoded) {
+        if (decoded) {
             return "{\"result\" : \"success\"}";
         } else {
             return "{\"result\" : \"fail\"}";
@@ -94,20 +101,20 @@ public class TestController {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
         JWTDecoder jwtDecoder = new JWTDecoder();
         boolean decoded = jwtDecoder.decode(token);
-        if(decoded) {
+        if (decoded) {
             return "{\"result\" : \"success\"}";
         } else {
             return "{\"result\" : \"fail\"}";
         }
     }
-    
+
     @RequestMapping("/test2")
     public String test2() {
         return "This is just another test";
     }
-    
+
     @RequestMapping("/test")
     public String jTest() {
-    	return "This is test";
+        return "This is test";
     }
 }
