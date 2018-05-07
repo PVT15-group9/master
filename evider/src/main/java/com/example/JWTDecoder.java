@@ -58,6 +58,7 @@ public class JWTDecoder {
             return "SQL went wrong!<br>" + IOHelper.writeException(e);
         }
 
-        return "All good! This is payload of the token that was received:<br><pre>" + StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload())) + "</pre>";
+        return StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload()));
+        //return "All good! This is payload of the token that was received:<br><pre>" + StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload())) + "</pre>";
     }
 }

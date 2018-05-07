@@ -71,7 +71,7 @@ public class TestController {
         return json;
     }
 
-    @CrossOrigin()
+    @CrossOrigin
     @RequestMapping("/jwtSharp")
     public String jwtTest(@RequestHeader("Authorization") String authHeader) {
         if(authHeader.length() < 7) {
