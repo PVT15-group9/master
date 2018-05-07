@@ -65,7 +65,7 @@ public class TestController {
     @RequestMapping("/events")
     public String getEvents() {
         cxn = db.connect();
-        String sql = "SELECT * FROM events";
+        String sql = "SELECT events.id, events.name, venues.name FROM events INNER JOIN venues ON events.venue_id = venues.id";
         String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
         return json;
