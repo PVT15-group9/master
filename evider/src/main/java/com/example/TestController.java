@@ -113,7 +113,7 @@ public class TestController {
         return "This is just another test";
     }
 
-    @RequestMapping("/test")
+    @RequestMapping("/test3")
     public String jTest() {
         return "This is test";
     }
