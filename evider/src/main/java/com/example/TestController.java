@@ -9,6 +9,7 @@ import java.sql.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,7 +38,8 @@ public class TestController {
 
         ObjectNode objectNode = objectMapper.createObjectNode();
         // put the resultset in a containing structure
-        objectNode.putPOJO("results", result);
+        //objectNode.putPOJO("results", result);
+        objectNode.putPOJO("", result);
 
         // generate all
         StringWriter sw = new StringWriter();
@@ -67,7 +69,7 @@ public class TestController {
     /*
      The following two routes should be how we do it in production!
     */
-    @RequestMapping(version + "venues")
+    @RequestMapping(value = version + "venues", method = RequestMethod.GET, produces = "application/json")
     public String getVenuesProd() {
         cxn = db.connect();
         String sql = "SELECT * FROM venues";
@@ -76,7 +78,7 @@ public class TestController {
         return json;
     }
     
-    @RequestMapping(version + "endpoints")
+    @RequestMapping(value = version + "endpoints", method = RequestMethod.GET, produces = "application/json")
     public String getEndpointsProd() {
         cxn = db.connect();
         String sql = "SELECT e.id, e.transport_type, e.name, t.img_url AS 't_img_url' FROM endpoints e JOIN transport_types t ON e.transport_type = t.id WHERE e.transport_type = 1 ";
