@@ -38,8 +38,8 @@ public class TestController {
 
         ObjectNode objectNode = objectMapper.createObjectNode();
         // put the resultset in a containing structure
-        //objectNode.putPOJO("results", result);
-        objectNode.putPOJO("", result);
+        objectNode.putPOJO("results", result);
+        // @TODO : How to get rid of the containing structure /JW
 
         // generate all
         StringWriter sw = new StringWriter();
