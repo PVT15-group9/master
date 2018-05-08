@@ -76,7 +76,7 @@ public class TestController {
         return json;
     }
     
-    @RequestMapping(version + "venues")
+    @RequestMapping(version + "endpoints")
     public String getEndpointsProd() {
         cxn = db.connect();
         String sql = "SELECT e.id, e.transport_type, e.name, t.img_url AS 't_img_url' FROM endpoints e JOIN transport_types t ON e.transport_type = t.id WHERE e.transport_type = 1 ";
