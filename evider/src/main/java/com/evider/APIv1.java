@@ -16,9 +16,4 @@ public class APIv1 {
     public String getVenues() {
         return "{\"foo\" : \"bar\", \"from\" : \"venues\"}";
     }
-    
-    @RequestMapping("test3")
-    public String test3() {
-        return "{\"test from\" : \"new controller\"}";
-    }
 }

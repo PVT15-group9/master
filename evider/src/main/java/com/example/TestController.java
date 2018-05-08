@@ -18,11 +18,6 @@ public class TestController {
     private Connection cxn = null;
     private static final String version = "/api/v1/";
 
-    @RequestMapping(version + "venues")
-    public String getVenues2() {
-        return "{\"foo\" : \"bar\", \"from\" : \"venues\"}";
-    }
-
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
         module.addSerializer(new ResultSetSerializer());
@@ -64,6 +59,27 @@ public class TestController {
     public String getVenues() {
         cxn = db.connect();
         String sql = "SELECT * FROM venues";
+        String json = this.executeQueryAndPrintResult(sql);
+        db.disconnect();
+        return json;
+    }
+    
+    /*
+     The following two routes should be how we do it in production!
+    */
+    @RequestMapping(version + "venues")
+    public String getVenuesProd() {
+        cxn = db.connect();
+        String sql = "SELECT * FROM venues";
+        String json = this.executeQueryAndPrintResult(sql);
+        db.disconnect();
+        return json;
+    }
+    
+    @RequestMapping(version + "venues")
+    public String getEndpointsProd() {
+        cxn = db.connect();
+        String sql = "SELECT e.id, e.transport_type, e.name, t.img_url AS 't_img_url' FROM endpoints e JOIN transport_types t ON e.transport_type = t.id WHERE e.transport_type = 1 ";
         String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
         return json;
