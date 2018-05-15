@@ -6,12 +6,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.StringUtils;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -19,56 +16,45 @@ import org.apache.commons.codec.binary.StringUtils;
  */
 public class JWTDecoder {
 
-    private MySQLConnect db = new MySQLConnect();
-    private Connection cxn = null;
+    @Value("#{PropertySplitter.map('${evide.issuers}')}")
+    Map<String, String> issuers;
 
-    public boolean decode(String token) {
-        cxn = db.connect();
+    private HashMap<String, HashMap<Integer, String>> retMap = new HashMap<>();
+
+    private void setError(int code, String msg) {
+        HashMap<Integer, String> errMsg = new HashMap<>();
+        errMsg.put(code, msg);
+        retMap.put("response", errMsg);
+    }
+
+    public HashMap<String, HashMap<Integer, String>> decode(String token) {
+
         DecodedJWT jwt;
         try {
             DecodedJWT jwtUnverified = JWT.decode(token);
             String iss = jwtUnverified.getIssuer();
-
-            // this should be fetched from application.properties
-            String sql = "SELECT secret FROM api_secrets WHERE username = ?";
-            PreparedStatement stmt = cxn.prepareStatement(sql);
-            stmt.setString(1, iss);
-            ResultSet rs = stmt.executeQuery();
-
-            String secret = null;
-
-            while (rs.next()) {
-                secret = rs.getString("secret");
-            }
+            String secret = issuers.get(iss);
 
             if (secret != null) {
                 Algorithm algorithm = Algorithm.HMAC256(secret);
                 JWTVerifier verifier = JWT.require(algorithm)
+                        .acceptExpiresAt(5)
                         .build(); //Reusable verifier instance
                 jwt = verifier.verify(token);
             } else {
-                // log the error!
-                return false;
-                //return "Could not verify the issuer of the token";
+                this.setError(1, "Could not verify the issuer of the token!");
+                return retMap;
             }
 
-            stmt.close();
         } catch (UnsupportedEncodingException e) {
-            // log the error!
-            return false;
-            //return "Unsupported encoding!<br>" + IOHelper.writeException(e);
+            this.setError(2, "The token was not in UTF-8!");
+            return retMap;
         } catch (JWTVerificationException e) {
-            // log the error!
-            return false;
-            //return "JWT could not be verified!<br>" + IOHelper.writeException(e);
-        } catch (SQLException e) {
-            // log the error!
-            return false;
-            //return "SQL went wrong!<br>" + IOHelper.writeException(e);
+            this.setError(3, "The JWT could not be verified!");
+            return retMap;
         }
 
-        return true;
-        //return StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload()));
-        //return "All good! This is payload of the token that was received:<br><pre>" + StringUtils.newStringUtf8(Base64.decodeBase64(jwt.getPayload())) + "</pre>";
+        this.setError(0, "JWT was verified!");
+        return retMap;
     }
 }

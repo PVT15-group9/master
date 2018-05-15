@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,52 +120,19 @@ public class TestController {
             return "Malformed Authorization header";
         }
         JWTDecoder jwtDecoder = new JWTDecoder();
-        boolean decoded = jwtDecoder.decode(authHeader.substring(7));
-        if (decoded) {
-            return "{\"result\" : \"success\"}";
-        } else {
-            return "{\"result\" : \"fail\"}";
-        }
+        HashMap<String, HashMap<Integer, String>> decoded = jwtDecoder.decode(authHeader.substring(7));
+        HashMap<Integer, String> response = decoded.get("response");
+        int code = (int) response.keySet().toArray()[0];
+        return "Code : " +  code + " - Message : " + response.get(code);
     }
 
     @RequestMapping("/jwt")
     public String jwtTest() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
         JWTDecoder jwtDecoder = new JWTDecoder();
-        boolean decoded = jwtDecoder.decode(token);
-        if (decoded) {
-            return "{\"result\" : \"success\"}";
-        } else {
-            return "{\"result\" : \"fail\"}";
-        }
-    }
-
-    @RequestMapping("/test2")
-    public String test2() {
-        return "This is just another test";
-    }
-
-    @RequestMapping("/test3")
-    public String jTest() {
-        return "This is test";
-    }
-
-    @RequestMapping("/properties")
-    public String properties() {
-        String app = "ionic-app";
-        String appKey = issuers.get(app);
-        String bla = "another";
-        String blaKey = issuers.get(bla);
-        String output = "";
-
-        output += "Key for " + app + " : ";
-        output += (appKey != null) ? appKey : "is null";
-        output += "<br>";
-
-        output += "Key for " + bla + " : ";
-        output += (blaKey != null) ? blaKey : "is null";
-        output += "<br>";
-
-        return output;
+        HashMap<String, HashMap<Integer, String>> decoded = jwtDecoder.decode(token);
+        HashMap<Integer, String> response = decoded.get("response");
+        int code = (int) response.keySet().toArray()[0];
+        return "Code : " +  code + " - Message : " + response.get(code);
     }
 }
