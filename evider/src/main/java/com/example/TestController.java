@@ -120,19 +120,15 @@ public class TestController {
             return "Malformed Authorization header";
         }
         JWTDecoder jwtDecoder = new JWTDecoder();
-        HashMap<String, HashMap<Integer, String>> decoded = jwtDecoder.decode(authHeader.substring(7));
-        HashMap<Integer, String> response = decoded.get("response");
-        int code = (int) response.keySet().toArray()[0];
-        return "Code : " +  code + " - Message : " + response.get(code);
+        boolean decoded = jwtDecoder.decode(authHeader.substring(7));
+        return (decoded) ? "It worked!" : "JWT was not accepted!";
     }
 
     @RequestMapping("/jwt")
     public String jwtTest() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
         JWTDecoder jwtDecoder = new JWTDecoder();
-        HashMap<String, HashMap<Integer, String>> decoded = jwtDecoder.decode(token);
-        HashMap<Integer, String> response = decoded.get("response");
-        int code = (int) response.keySet().toArray()[0];
-        return "Code : " +  code + " - Message : " + response.get(code);
+        boolean decoded = jwtDecoder.decode(token);
+        return (decoded) ? "It worked!" : "JWT was not accepted!";
     }
 }

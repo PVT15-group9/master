@@ -19,15 +19,7 @@ public class JWTDecoder {
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
     Map<String, String> issuers;
 
-    private HashMap<String, HashMap<Integer, String>> retMap = new HashMap<>();
-
-    private void setError(int code, String msg) {
-        HashMap<Integer, String> errMsg = new HashMap<>();
-        errMsg.put(code, msg);
-        retMap.put("response", errMsg);
-    }
-
-    public HashMap<String, HashMap<Integer, String>> decode(String token) {
+    public boolean decode(String token) {
 
         DecodedJWT jwt;
         try {
@@ -35,26 +27,20 @@ public class JWTDecoder {
             String iss = jwtUnverified.getIssuer();
             String secret = issuers.get(iss);
 
-            if (secret != null) {
-                Algorithm algorithm = Algorithm.HMAC256(secret);
-                JWTVerifier verifier = JWT.require(algorithm)
-                        //.acceptExpiresAt(5)
-                        .build(); //Reusable verifier instance
-                jwt = verifier.verify(token);
-            } else {
-                this.setError(1, "Could not verify the issuer of the token!");
-                return retMap;
+            if (secret == null) {
+                return false;
             }
 
-        } catch (UnsupportedEncodingException e) {
-            this.setError(2, "The token was not in UTF-8!");
-            return retMap;
-        } catch (JWTVerificationException e) {
-            this.setError(3, "The JWT could not be verified!");
-            return retMap;
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            JWTVerifier verifier = JWT.require(algorithm)
+                    //.acceptExpiresAt(5)
+                    .build(); //Reusable verifier instance
+            jwt = verifier.verify(token);
+
+        } catch (UnsupportedEncodingException | JWTVerificationException e) {
+            return false;
         }
 
-        this.setError(0, "JWT was verified!");
-        return retMap;
+        return true;
     }
 }
