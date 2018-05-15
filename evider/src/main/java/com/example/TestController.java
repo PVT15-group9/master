@@ -25,6 +25,8 @@ public class TestController {
     private Map<String, String> issuers;
 
     private String executeQueryAndPrintResult(String sql) {
+        cxn = db.connect();
+
         SimpleModule module = new SimpleModule();
         module.addSerializer(new ResultSetSerializer());
 
@@ -54,6 +56,7 @@ public class TestController {
             return IOHelper.writeException(e);
         }
 
+        db.disconnect();
         return sw.toString();
     }
 
@@ -62,19 +65,15 @@ public class TestController {
      */
     @RequestMapping(value = version + "venues", method = RequestMethod.GET, produces = "application/json")
     public String getVenuesProd() {
-        cxn = db.connect();
         String sql = "SELECT * FROM venues";
         String json = this.executeQueryAndPrintResult(sql);
-        db.disconnect();
         return json;
     }
 
     @RequestMapping(value = version + "endpoints", method = RequestMethod.GET, produces = "application/json")
     public String getEndpointsProd() {
-        cxn = db.connect();
         String sql = "SELECT e.id, e.transport_type, e.name, t.img_url AS 't_img_url' FROM endpoints e JOIN transport_types t ON e.transport_type = t.id WHERE e.transport_type = 1 ";
         String json = this.executeQueryAndPrintResult(sql);
-        db.disconnect();
         return json;
     }
 
@@ -125,20 +124,20 @@ public class TestController {
         boolean decoded = jwtDecoder.decode(token);
         return (decoded) ? "It worked!" : "JWT was not accepted!";
     }
-    
+
     @RequestMapping("/jwt2")
     public String jwt2() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
         JWTDecoder jwtDecoder = new JWTDecoder();
         return jwtDecoder.issuer(token);
     }
-    
+
     @RequestMapping("/issuers")
     public String issuers() {
         String output = "";
         for (Map.Entry<String, String> entry : issuers.entrySet()) {
-		output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
-	}
+            output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
+        }
         return output;
     }
 }
