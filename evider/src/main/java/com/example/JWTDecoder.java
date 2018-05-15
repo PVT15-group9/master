@@ -23,9 +23,6 @@ public class JWTDecoder {
             DecodedJWT jwtUnverified = JWT.decode(token);
             String iss = jwtUnverified.getIssuer();
             String secret = issuers.get(iss);
-            if (secret == null) {
-                return false;
-            }
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
