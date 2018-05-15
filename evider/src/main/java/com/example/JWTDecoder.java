@@ -21,7 +21,7 @@ public class JWTDecoder {
     private static final Logger logger = LoggerFactory.getLogger(BasicApplication.class);
     
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
-    Map<String, String> issuers;
+    private Map<String, String> issuers;
 
     public boolean decode(String token) {
         try {

@@ -25,11 +25,6 @@ public class TestController {
     private Connection cxn = null;
     private static final String version = "/api/v1/";
 
-    //@Value("${issuer.test}")
-    //private String testIssuer;
-    @Autowired
-    private Environment env;
-
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
     Map<String, String> issuers;
 
@@ -133,5 +128,10 @@ public class TestController {
         JWTDecoder jwtDecoder = new JWTDecoder();
         boolean decoded = jwtDecoder.decode(token);
         return (decoded) ? "It worked!" : "JWT was not accepted!";
+    }
+    
+    @RequestMapping("/issuers")
+    public String issuers() {
+        return issuers.get("ionic-app");
     }
 }
