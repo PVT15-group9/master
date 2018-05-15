@@ -6,12 +6,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +22,7 @@ public class TestController {
     private static final String version = "/api/v1/";
 
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
-    Map<String, String> issuers;
+    private Map<String, String> issuers;
 
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
