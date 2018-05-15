@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -14,6 +15,7 @@ import java.util.Map;
  */
 public class JWTDecoder {
     
+    @Autowired
     private Issuers issuers = new Issuers();
 
     public boolean decode(String token) {

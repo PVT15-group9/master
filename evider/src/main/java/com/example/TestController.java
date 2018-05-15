@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @Autowired
-    
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
     private static final String version = "/api/v1/";
