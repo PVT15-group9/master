@@ -151,13 +151,6 @@ public class TestController {
 
     @RequestMapping("/properties")
     public String properties() {
-        String output = "";
-        Iterator it = issuers.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            output += pair.getKey() + " = " + pair.getValue() + "<br>";
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-        return output;
+        return issuers.get("ionic-app");
     }
 }
