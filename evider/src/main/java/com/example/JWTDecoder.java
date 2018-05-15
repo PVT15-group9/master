@@ -38,11 +38,10 @@ public class JWTDecoder {
     }
 
     public String issuer(String token) {
-        DecodedJWT jwtUnverified = JWT.decode(token);
-        String iss = jwtUnverified.getIssuer();
-        //return iss;
-        return issuers.get("ionic-app");
-        //String secret = issuers.get(iss);
-        //return secret;
+        String output = "";
+        for (Map.Entry<String, String> entry : issuers.entrySet()) {
+		output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
+	}
+        return output;
     }
 }

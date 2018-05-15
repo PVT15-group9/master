@@ -135,6 +135,10 @@ public class TestController {
     
     @RequestMapping("/issuers")
     public String issuers() {
-        return issuers.get("ionic-app");
+        String output = "";
+        for (Map.Entry<String, String> entry : issuers.entrySet()) {
+		output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
+	}
+        return output;
     }
 }
