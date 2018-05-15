@@ -40,7 +40,8 @@ public class JWTDecoder {
     public String issuer(String token) {
         DecodedJWT jwtUnverified = JWT.decode(token);
         String iss = jwtUnverified.getIssuer();
-        return iss;
+        //return iss;
+        return issuers.get("ionic-app");
         //String secret = issuers.get(iss);
         //return secret;
     }
