@@ -7,24 +7,19 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author johe2765 Jonathan Heikel (Wening)
  */
 public class JWTDecoder {
-
-    @Value("#{PropertySplitter.map('${evide.issuers}')}")
-    private Map<String, String> issuers;
-
-    @Value("${evide.issuers}")
-    private String evideIssuers;
+    
+    private Issuers issuers = new Issuers();
 
     public boolean decode(String token) {
         DecodedJWT jwtUnverified = JWT.decode(token);
         String iss = jwtUnverified.getIssuer();
-        String secret = issuers.get(iss);
+        String secret = issuers.getKey(iss);
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -41,13 +36,10 @@ public class JWTDecoder {
     }
 
     public String issuer(String token) {
-        return evideIssuers;
-        /*
         String output = "";
-        for (Map.Entry<String, String> entry : issuers.entrySet()) {
+        for (Map.Entry<String, String> entry : issuers.getIssuers().entrySet()) {
             output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
         }
         return output;
-         */
     }
 }
