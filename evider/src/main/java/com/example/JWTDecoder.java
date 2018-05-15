@@ -15,7 +15,7 @@ import org.springframework.context.annotation.*;
  * @author johe2765 Jonathan Heikel (Wening)
  */
 @Configuration
-@PropertySource("application.properties")
+@PropertySource(value = "classpath:application.properties", ignoreResourceNotFound = true)
 public class JWTDecoder {
 
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
