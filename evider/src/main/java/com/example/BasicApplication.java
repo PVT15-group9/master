@@ -15,7 +15,7 @@ public class BasicApplication extends SpringBootServletInitializer {
     
     public static void main(String[] args) {
         SpringApplication.run(applicationClass, args);
-        logger.debug(" --- Application Started --- ");
+        logger.debug(" ** Application Started ** ");
     }
 
     @Override
