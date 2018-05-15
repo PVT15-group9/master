@@ -41,7 +41,7 @@ public class JWTDecoder {
         DecodedJWT jwtUnverified = JWT.decode(token);
         String iss = jwtUnverified.getIssuer();
         return iss;
-        String secret = issuers.get(iss);
-        return secret;
+        //String secret = issuers.get(iss);
+        //return secret;
     }
 }
