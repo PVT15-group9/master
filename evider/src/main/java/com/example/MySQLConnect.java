@@ -9,7 +9,7 @@ public class MySQLConnect {
 
     // init database constants
     private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DATABASE_URL = "jdbc:mysql://mysql.dsv.su.se:3306/bekn5739?useSSL=false";
+    private static final String DATABASE_URL = "jdbc:mysql://mysql.dsv.su.se:3306/bekn5739";
     private static final String USERNAME = "bekn5739";
     private static final String PASSWORD = "iw8seeCh8ag9";
     private static final String MAX_POOL = "250";
