@@ -38,7 +38,7 @@ public class JWTDecoder {
             if (secret != null) {
                 Algorithm algorithm = Algorithm.HMAC256(secret);
                 JWTVerifier verifier = JWT.require(algorithm)
-                        .acceptExpiresAt(5)
+                        //.acceptExpiresAt(5)
                         .build(); //Reusable verifier instance
                 jwt = verifier.verify(token);
             } else {
