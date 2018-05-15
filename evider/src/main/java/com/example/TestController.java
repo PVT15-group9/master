@@ -21,10 +21,9 @@ public class TestController {
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
     private static final String version = "/api/v1/";
-    
-    @Value("#{PropertySplitter.map('${evide.issuers}')}")
-    private Map<String, String> issuers;
 
+    //@Value("#{PropertySplitter.map('${evide.issuers}')}")
+    //private Map<String, String> issuers;
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
         module.addSerializer(new ResultSetSerializer());
@@ -54,7 +53,7 @@ public class TestController {
         } catch (IOException e) {
             return IOHelper.writeException(e);
         }
-        
+
         return sw.toString();
     }
 
@@ -129,17 +128,18 @@ public class TestController {
 
     @RequestMapping("/jwt2")
     public String jwt2() {
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
-        JWTDecoder jwtDecoder = new JWTDecoder();
-        return jwtDecoder.issuer(token);
+        return new JWTDecoder().issuer();
     }
-    
+
     @RequestMapping("/issuers")
     public String issuer(String token) {
+        return "no worko";
+        /*
         String output = "";
         for (Map.Entry<String, String> entry : issuers.entrySet()) {
             output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
         }
         return output;
+         */
     }
 }
