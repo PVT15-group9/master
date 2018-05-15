@@ -66,20 +66,6 @@ public class TestController {
         return sw.toString();
     }
 
-    @RequestMapping("/")
-    public String troll() {
-        return "All your scrum are belong to us";
-    }
-
-    @RequestMapping("/venues")
-    public String getVenues() {
-        cxn = db.connect();
-        String sql = "SELECT * FROM venues";
-        String json = this.executeQueryAndPrintResult(sql);
-        db.disconnect();
-        return json;
-    }
-
     /*
      The following two routes should be how we do it in production!
      */
@@ -96,6 +82,23 @@ public class TestController {
     public String getEndpointsProd() {
         cxn = db.connect();
         String sql = "SELECT e.id, e.transport_type, e.name, t.img_url AS 't_img_url' FROM endpoints e JOIN transport_types t ON e.transport_type = t.id WHERE e.transport_type = 1 ";
+        String json = this.executeQueryAndPrintResult(sql);
+        db.disconnect();
+        return json;
+    }
+
+    /*
+    The routes below are test routes...
+     */
+    @RequestMapping("/")
+    public String troll() {
+        return "All your scrum are belong to us";
+    }
+
+    @RequestMapping("/venues")
+    public String getVenues() {
+        cxn = db.connect();
+        String sql = "SELECT * FROM venues";
         String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
         return json;
