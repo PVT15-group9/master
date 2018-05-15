@@ -19,11 +19,11 @@ public class JWTDecoder {
     private Map<String, String> issuers;
 
     public boolean decode(String token) {
-        try {
-            DecodedJWT jwtUnverified = JWT.decode(token);
-            String iss = jwtUnverified.getIssuer();
-            String secret = issuers.get(iss);
+        DecodedJWT jwtUnverified = JWT.decode(token);
+        String iss = jwtUnverified.getIssuer();
+        String secret = issuers.get(iss);
 
+        try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
                     //.acceptExpiresAt(5)
