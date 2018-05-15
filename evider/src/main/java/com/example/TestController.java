@@ -153,7 +153,7 @@ public class TestController {
     public String properties() {
         String app = "ionic-app";
         String appKey = issuers.get(app);
-        String bla = "blargh";
+        String bla = "another";
         String blaKey = issuers.get(bla);
         String output = "";
 
