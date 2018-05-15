@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.example.BasicApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.177 s <<< FAILURE! - in com.example.BasicApplicationTests
-contextLoads(com.example.BasicApplicationTests)  Time elapsed: 0.011 s  <<< ERROR!
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.091 s <<< FAILURE! - in com.example.BasicApplicationTests
+contextLoads(com.example.BasicApplicationTests)  Time elapsed: 0.014 s  <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
 	The import org.junit.runner.RunWith cannot be resolved

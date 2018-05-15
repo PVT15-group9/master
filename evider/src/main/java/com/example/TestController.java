@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,9 @@ public class TestController {
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
     private static final String version = "/api/v1/";
+
+    @Value("${issuer.test}")
+    private String testIssuer;
 
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
@@ -65,10 +69,10 @@ public class TestController {
         db.disconnect();
         return json;
     }
-    
+
     /*
      The following two routes should be how we do it in production!
-    */
+     */
     @RequestMapping(value = version + "venues", method = RequestMethod.GET, produces = "application/json")
     public String getVenuesProd() {
         cxn = db.connect();
@@ -77,7 +81,7 @@ public class TestController {
         db.disconnect();
         return json;
     }
-    
+
     @RequestMapping(value = version + "endpoints", method = RequestMethod.GET, produces = "application/json")
     public String getEndpointsProd() {
         cxn = db.connect();
@@ -134,5 +138,10 @@ public class TestController {
     @RequestMapping("/test3")
     public String jTest() {
         return "This is test";
+    }
+
+    @RequestMapping("/properties")
+    public String properties() {
+        return testIssuer;
     }
 }
