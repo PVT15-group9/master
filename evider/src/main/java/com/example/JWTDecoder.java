@@ -8,14 +8,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
 
 /**
  *
  * @author johe2765 Jonathan Heikel (Wening)
  */
-@Configuration
-@PropertySource(value = "classpath:application.properties")
 public class JWTDecoder {
 
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
