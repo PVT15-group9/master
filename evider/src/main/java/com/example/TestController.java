@@ -6,7 +6,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
+import java.util.Iterator;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,9 +26,11 @@ public class TestController {
 
     //@Value("${issuer.test}")
     //private String testIssuer;
-    
     @Autowired
     private Environment env;
+
+    @Value("#{PropertySplitter.map('${evide.issuers}')}")
+    Map<String, String> issuers;
 
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
@@ -146,6 +151,13 @@ public class TestController {
 
     @RequestMapping("/properties")
     public String properties() {
-        return env.getProperty("issuer.test");
+        String output = "";
+        Iterator it = issuers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            output += pair.getKey() + " = " + pair.getValue() + "<br>";
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        return output;
     }
 }
