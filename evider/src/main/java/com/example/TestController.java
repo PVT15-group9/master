@@ -151,6 +151,20 @@ public class TestController {
 
     @RequestMapping("/properties")
     public String properties() {
-        return issuers.get("ionic-app");
+        String app = "ionic-app";
+        String appKey = issuers.get(app);
+        String bla = "blargh";
+        String blaKey = issuers.get(bla);
+        String output = "";
+
+        output += "Key for " + app + " : ";
+        output += (appKey != null) ? appKey : "is null";
+        output += "<br>";
+
+        output += "Key for " + bla + " : ";
+        output += (blaKey != null) ? blaKey : "is null";
+        output += "<br>";
+
+        return output;
     }
 }
