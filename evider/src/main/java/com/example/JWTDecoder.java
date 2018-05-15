@@ -18,6 +18,9 @@ public class JWTDecoder {
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
     private Map<String, String> issuers;
 
+    @Value("${evide.issuers}")
+    private String evideIssuers;
+
     public boolean decode(String token) {
         DecodedJWT jwtUnverified = JWT.decode(token);
         String iss = jwtUnverified.getIssuer();
@@ -38,10 +41,13 @@ public class JWTDecoder {
     }
 
     public String issuer(String token) {
+        return evideIssuers;
+        /*
         String output = "";
         for (Map.Entry<String, String> entry : issuers.entrySet()) {
-		output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
-	}
+            output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
+        }
         return output;
+         */
     }
 }
