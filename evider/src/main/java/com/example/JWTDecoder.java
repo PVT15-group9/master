@@ -19,8 +19,6 @@ public class JWTDecoder {
     Map<String, String> issuers;
 
     public boolean decode(String token) {
-
-        DecodedJWT jwt;
         try {
             DecodedJWT jwtUnverified = JWT.decode(token);
             String iss = jwtUnverified.getIssuer();
@@ -34,7 +32,7 @@ public class JWTDecoder {
             JWTVerifier verifier = JWT.require(algorithm)
                     //.acceptExpiresAt(5)
                     .build(); //Reusable verifier instance
-            jwt = verifier.verify(token);
+            DecodedJWT jwt = verifier.verify(token);
 
         } catch (UnsupportedEncodingException | JWTVerificationException e) {
             return false;
