@@ -9,17 +9,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
  * @author johe2765 Jonathan Heikel (Wening)
  */
 public class JWTDecoder {
 
-    private static final Logger logger = LoggerFactory.getLogger(BasicApplication.class);
-    
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
     private Map<String, String> issuers;
 
@@ -27,7 +22,6 @@ public class JWTDecoder {
         try {
             DecodedJWT jwtUnverified = JWT.decode(token);
             String iss = jwtUnverified.getIssuer();
-            logger.debug("Issuer is : " + iss);
             String secret = issuers.get(iss);
             if (secret == null) {
                 return false;
@@ -44,5 +38,10 @@ public class JWTDecoder {
         }
 
         return true;
+    }
+
+    public String issuer(String token) {
+        DecodedJWT jwtUnverified = JWT.decode(token);
+        return jwtUnverified.getIssuer();
     }
 }

@@ -130,6 +130,13 @@ public class TestController {
         return (decoded) ? "It worked!" : "JWT was not accepted!";
     }
     
+    @RequestMapping("/jwt2")
+    public String jwt2() {
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
+        JWTDecoder jwtDecoder = new JWTDecoder();
+        return jwtDecoder.issuer(token);
+    }
+    
     @RequestMapping("/issuers")
     public String issuers() {
         return issuers.get("ionic-app");
