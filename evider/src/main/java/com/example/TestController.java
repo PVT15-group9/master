@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,9 @@ public class TestController {
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
     private static final String version = "/api/v1/";
+    
+    @Value("#{PropertySplitter.map('${evide.issuers}')}")
+    private Map<String, String> issuers;
 
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
@@ -126,5 +131,14 @@ public class TestController {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
         JWTDecoder jwtDecoder = new JWTDecoder();
         return jwtDecoder.issuer(token);
+    }
+    
+    @RequestMapping("/issuers")
+    public String issuer(String token) {
+        String output = "";
+        for (Map.Entry<String, String> entry : issuers.entrySet()) {
+            output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
+        }
+        return output;
     }
 }
