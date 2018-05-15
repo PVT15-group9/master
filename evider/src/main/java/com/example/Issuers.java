@@ -4,26 +4,17 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author johe2765 Jonathan Heikel (Wening)
  */
+@Component
 public class Issuers {
 
-    @Autowired
-    private Environment env;
-    
+    @Value("#{PropertySplitter.map('${evide.issuers}')}")
     private Map<String, String> issuers;
-
-    //@Value("#{PropertySplitter.map('${evide.issuers}')}")
-    //private Map<String, String> issuers;
-
-    public Issuers() {
-        String issuersFromFile = env.getProperty("evide.issuers");
-        PropertySplitter ps = new PropertySplitter();
-        issuers = ps.map(issuersFromFile);
-    }
     
     public Map<String, String> getIssuers() {
         return issuers;
