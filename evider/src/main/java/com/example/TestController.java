@@ -24,6 +24,10 @@ public class TestController {
 
     //@Value("#{PropertySplitter.map('${evide.issuers}')}")
     //private Map<String, String> issuers;
+    
+    @Value("${evide.issuers}")
+    private String evideIssuers;
+    
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
         module.addSerializer(new ResultSetSerializer());
@@ -133,7 +137,7 @@ public class TestController {
 
     @RequestMapping("/issuers")
     public String issuer(String token) {
-        return "no worko";
+        return evideIssuers;
         /*
         String output = "";
         for (Map.Entry<String, String> entry : issuers.entrySet()) {
