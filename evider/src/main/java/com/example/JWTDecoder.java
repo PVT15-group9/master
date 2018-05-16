@@ -7,16 +7,18 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author johe2765 Jonathan Heikel (Wening)
  */
-@Component
+@Service
 public class JWTDecoder {
 
-    private IssuersConfig issuers = new IssuersConfig();
+    @Autowired
+    private IssuersConfig issuers;
 
     public boolean decode(String token) {
         DecodedJWT jwtUnverified = JWT.decode(token);
