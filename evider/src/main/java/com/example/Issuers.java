@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 public class Issuers {
 
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
-    static Map<String, String> issuers;
+    Map<String, String> issuers;
     
-    public static Map<String, String> getIssuers() {
+    public Map<String, String> getIssuers() {
         return issuers;
     }
 
-    public static String getKey(String iss) {
+    public String getKey(String iss) {
         return issuers.get(iss);
     }
 }
