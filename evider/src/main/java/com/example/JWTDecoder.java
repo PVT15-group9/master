@@ -8,11 +8,13 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author johe2765 Jonathan Heikel (Wening)
  */
+@Component
 public class JWTDecoder {
     
     @Autowired
