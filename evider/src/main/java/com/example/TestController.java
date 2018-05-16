@@ -21,9 +21,6 @@ public class TestController {
     private Connection cxn = null;
     private static final String version = "/api/v1/";
     
-    @Value("${evide.version}")
-    private String apiVersion;
-    
     @Autowired
     private JWTDecoder jwtDecoder;
     
@@ -130,15 +127,5 @@ public class TestController {
     @RequestMapping("/jwt2")
     public String jwt2() {
         return jwtDecoder.issuer();
-    }
-    
-    @RequestMapping("/version")
-    public String version() {
-        return apiVersion;
-    }
-    
-    @RequestMapping("/versionJwt")
-    public String versionJwt() {
-        return jwtDecoder.version();
     }
 }

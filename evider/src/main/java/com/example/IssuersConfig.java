@@ -16,18 +16,6 @@ public class IssuersConfig {
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
     private Map<String, String> issuers;
     
-    @Value("${evide.version}")
-    private String version;
-    
-//    @Bean
-//    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-//        return new PropertySourcesPlaceholderConfigurer();
-//    }
-    
-    public String getVersion() {
-        return version;
-    }
-    
     public Map<String, String> getIssuers() {
         return issuers;
     }
