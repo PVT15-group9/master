@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,9 +16,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class JWTDecoder {
-    
+
     private Issuers issuers = new Issuers();
-    
+
+    @Value("${evide.version}")
+    private String apiVersion;
+
     public boolean decode(String token) {
         DecodedJWT jwtUnverified = JWT.decode(token);
         String iss = jwtUnverified.getIssuer();
@@ -38,10 +42,13 @@ public class JWTDecoder {
     }
 
     public String issuer() {
+        return apiVersion;
+        /*
         String output = "";
         for (Map.Entry<String, String> entry : issuers.getIssuers().entrySet()) {
             output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
         }
         return output;
+         */
     }
 }
