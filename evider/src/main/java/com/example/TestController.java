@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,6 +23,9 @@ public class TestController {
     
     @Value("${evide.version}")
     private String apiVersion;
+    
+    @Autowired
+    private JWTDecoder jwtDecoder;
     
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
@@ -112,7 +116,6 @@ public class TestController {
         if (!authHeader.substring(0, 7).equals("Bearer ")) {
             return "Malformed Authorization header";
         }
-        JWTDecoder jwtDecoder = new JWTDecoder();
         boolean decoded = jwtDecoder.decode(authHeader.substring(7));
         return (decoded) ? "It worked!" : "JWT was not accepted!";
     }
@@ -120,14 +123,13 @@ public class TestController {
     @RequestMapping("/jwt")
     public String jwtTest() {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpb25pYy1hcHAifQ.6USP3K3hKsmkU17W4u8iCuRHSXmL50P51vgLdDj8sLU";
-        JWTDecoder jwtDecoder = new JWTDecoder();
         boolean decoded = jwtDecoder.decode(token);
         return (decoded) ? "It worked!" : "JWT was not accepted!";
     }
 
     @RequestMapping("/jwt2")
     public String jwt2() {
-        return new JWTDecoder().issuer();
+        return jwtDecoder.issuer();
     }
     
     @RequestMapping("/version")
