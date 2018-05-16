@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class Issuers {
 
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
-    private Map<String, String> issuers;
+    Map<String, String> issuers;
     
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
