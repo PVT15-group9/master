@@ -21,12 +21,6 @@ public class TestController {
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
     private static final String version = "/api/v1/";
-
-    //@Value("#{PropertySplitter.map('${evide.issuers}')}")
-    //private Map<String, String> issuers;
-    
-    @Value("${evide.issuers}")
-    private String evideIssuers;
     
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
@@ -133,17 +127,5 @@ public class TestController {
     @RequestMapping("/jwt2")
     public String jwt2() {
         return new JWTDecoder().issuer();
-    }
-
-    @RequestMapping("/issuers")
-    public String issuer(String token) {
-        return evideIssuers;
-        /*
-        String output = "";
-        for (Map.Entry<String, String> entry : issuers.entrySet()) {
-            output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
-        }
-        return output;
-         */
     }
 }

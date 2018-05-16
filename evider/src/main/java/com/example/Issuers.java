@@ -3,14 +3,14 @@ package com.example;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author johe2765 Jonathan Heikel (Wening)
  */
-@Configuration
+@Component
 public class Issuers {
 
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
