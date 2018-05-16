@@ -17,13 +17,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class JWTDecoder {
     
-    @Autowired
-    private Issuers issuers = new Issuers();
-
     public boolean decode(String token) {
         DecodedJWT jwtUnverified = JWT.decode(token);
         String iss = jwtUnverified.getIssuer();
-        String secret = issuers.getKey(iss);
+        String secret = Issuers.getKey(iss);
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -41,7 +38,7 @@ public class JWTDecoder {
 
     public String issuer() {
         String output = "";
-        for (Map.Entry<String, String> entry : issuers.getIssuers().entrySet()) {
+        for (Map.Entry<String, String> entry : Issuers.getIssuers().entrySet()) {
             output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
         }
         return output;

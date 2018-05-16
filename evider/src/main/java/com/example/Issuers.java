@@ -2,8 +2,6 @@ package com.example;
 
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,18 +12,13 @@ import org.springframework.stereotype.Component;
 public class Issuers {
 
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
-    Map<String, String> issuers;
+    static Map<String, String> issuers;
     
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-    
-    public Map<String, String> getIssuers() {
+    public static Map<String, String> getIssuers() {
         return issuers;
     }
 
-    public String getKey(String iss) {
+    public static String getKey(String iss) {
         return issuers.get(iss);
     }
 }
