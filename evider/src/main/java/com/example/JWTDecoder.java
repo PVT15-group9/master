@@ -46,4 +46,8 @@ public class JWTDecoder {
         }
         return output;
     }
+    
+    public String version() {
+        return issuers.getVersion();
+    }
 }

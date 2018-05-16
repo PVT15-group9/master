@@ -136,4 +136,9 @@ public class TestController {
     public String version() {
         return apiVersion;
     }
+    
+    @RequestMapping("/versionJwt")
+    public String versionJwt() {
+        return jwtDecoder.version();
+    }
 }
