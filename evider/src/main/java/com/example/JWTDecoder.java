@@ -38,12 +38,4 @@ public class JWTDecoder {
 
         return true;
     }
-
-    public String issuer() {
-        String output = "";
-        for (Map.Entry<String, String> entry : issuers.getIssuers().entrySet()) {
-            output += "Key : " + entry.getKey() + " Value : " + entry.getValue() + "<br>";
-        }
-        return output;
-    }
 }

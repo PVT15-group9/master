@@ -123,9 +123,4 @@ public class TestController {
         boolean decoded = jwtDecoder.decode(token);
         return (decoded) ? "It worked!" : "JWT was not accepted!";
     }
-
-    @RequestMapping("/jwt2")
-    public String jwt2() {
-        return jwtDecoder.issuer();
-    }
 }
