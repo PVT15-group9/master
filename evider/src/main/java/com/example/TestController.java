@@ -60,6 +60,25 @@ public class TestController {
     /*
      The following two routes should be how we do it in production!
      */
+    @RequestMapping(value = version + "routes", method = RequestMethod.GET, produces = "application/json")
+    public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader.length() < 7) {
+            return "Invalid Authorization header!";
+        }
+        if (!authHeader.substring(0, 7).equals("Bearer ")) {
+            return "Malformed Authorization header";
+        }
+        
+        String token = authHeader.substring(7);
+        
+        boolean decoded = jwtDecoder.decode(token);
+        if(!decoded) {
+            return "no worko";
+        }
+        
+        return jwtDecoder.getPayload(token);
+    }
+
     @RequestMapping(value = version + "venues", method = RequestMethod.GET, produces = "application/json")
     public String getVenuesProd() {
         cxn = db.connect();
@@ -75,11 +94,11 @@ public class TestController {
         /*
             SELECT 
             r.id AS 'route_id',
+            r.venue_id, 
             r.endpoint_id ,
             e.transport_type, 
             e.name AS 'e_name',
             t.name AS 't_name',
-            r.venue_id, 
             e.SL_SITE_ID,
             t.img_url AS 'icon',
             'https://res.cloudinary.com/pvt-group09/image/upload/v1525786167/sensor-red.png' AS 'crowd_indicator',
