@@ -20,10 +20,10 @@ public class TestController {
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
     private static final String version = "/api/v1/";
-    
+
     @Autowired
     private JWTDecoder jwtDecoder;
-    
+
     private String executeQueryAndPrintResult(String sql) {
         SimpleModule module = new SimpleModule();
         module.addSerializer(new ResultSetSerializer());
@@ -71,8 +71,30 @@ public class TestController {
 
     @RequestMapping(value = version + "endpoints", method = RequestMethod.GET, produces = "application/json")
     public String getEndpointsProd() {
+        // Currently hard coded, always venue id 1  (Globen)
+        /*
+            SELECT 
+            r.id AS 'route_id',
+            r.endpoint_id ,
+            e.transport_type, 
+            r.venue_id, e.name, 
+            t.img_url AS 'icon',
+            'https://res.cloudinary.com/pvt-group09/image/upload/v1525786167/sensor-red.png' AS 'crowd_indicator',
+            r.distance_in_meters,
+            r.color,
+            r.color_hex,
+            CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), " min") AS 'time'
+
+            FROM routes r
+
+            JOIN venues v ON r.venue_id = v.id
+            JOIN endpoints e ON r.endpoint_id = e.id
+            JOIN transport_types t ON e.transport_type = t.id
+            WHERE r.venue_id = 1
+         */
         cxn = db.connect();
-        String sql = "SELECT e.id, e.transport_type, e.name, t.img_url AS 't_img_url' FROM endpoints e JOIN transport_types t ON e.transport_type = t.id WHERE e.transport_type = 1 ";
+        //String sql = "SELECT e.id, e.transport_type, e.name, t.img_url AS 't_img_url' FROM endpoints e JOIN transport_types t ON e.transport_type = t.id WHERE e.transport_type = 1 ";
+        String sql = "SELECT  r.id AS 'route_id', r.endpoint_id , e.transport_type,  r.venue_id, e.name,  t.img_url AS 'icon', 'https://res.cloudinary.com/pvt-group09/image/upload/v1525786167/sensor-red.png' AS 'crowd_indicator', r.distance_in_meters, r.color, r.color_hex, CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.venue_id = 1";
         String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
         return json;
