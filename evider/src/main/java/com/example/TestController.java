@@ -77,7 +77,10 @@ public class TestController {
             r.id AS 'route_id',
             r.endpoint_id ,
             e.transport_type, 
-            r.venue_id, e.name, 
+            t.name,
+            r.venue_id, 
+            e.name,
+            e.SL_SITE_ID,
             t.img_url AS 'icon',
             'https://res.cloudinary.com/pvt-group09/image/upload/v1525786167/sensor-red.png' AS 'crowd_indicator',
             r.distance_in_meters,
@@ -96,7 +99,7 @@ public class TestController {
          */
         cxn = db.connect();
         //String sql = "SELECT e.id, e.transport_type, e.name, t.img_url AS 't_img_url' FROM endpoints e JOIN transport_types t ON e.transport_type = t.id WHERE e.transport_type = 1 ";
-        String sql = "SELECT  r.id AS 'route_id', r.endpoint_id , e.transport_type,  r.venue_id, e.name,  t.img_url AS 'icon', 'https://res.cloudinary.com/pvt-group09/image/upload/v1525786167/sensor-red.png' AS 'crowd_indicator', r.distance_in_meters, r.color, r.color_hex, CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.venue_id = 1 ORDER BY r.distance_in_meters ASC";
+        String sql = "SELECT  r.id AS 'route_id', r.endpoint_id , e.transport_type,  t.name, r.venue_id,  e.name, e.SL_SITE_ID, t.img_url AS 'icon', 'https://res.cloudinary.com/pvt-group09/image/upload/v1525786167/sensor-red.png' AS 'crowd_indicator', r.distance_in_meters, r.color, r.color_hex, CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.venue_id = 1  ORDER BY r.distance_in_meters ASC";
         String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
         return json;
