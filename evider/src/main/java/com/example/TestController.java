@@ -60,14 +60,19 @@ public class TestController {
     /*
      The following two routes should be how we do it in production!
      */
+    @RequestMapping("/error")
+    public String error() {
+        return "{\"error\" : \"This is a generic error!\"}";
+    }
+    
     @CrossOrigin
     @RequestMapping(value = version + "routes", method = RequestMethod.GET, produces = "application/json")
     public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader) {
         if (authHeader.length() < 7) {
-            return "Invalid Authorization header!";
+            return "{\"error\" : \"Invalid Authorization header!\"}";
         }
         if (!authHeader.substring(0, 7).equals("Bearer ")) {
-            return "Malformed Authorization header";
+            return "{\"error\" : \"Malformed Authorization header!\"}";
         }
         
         String token = authHeader.substring(7);
