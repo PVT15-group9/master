@@ -60,6 +60,7 @@ public class TestController {
     /*
      The following two routes should be how we do it in production!
      */
+    @CrossOrigin
     @RequestMapping(value = version + "routes", method = RequestMethod.GET, produces = "application/json")
     public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader) {
         if (authHeader.length() < 7) {
