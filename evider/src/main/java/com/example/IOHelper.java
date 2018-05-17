@@ -1,4 +1,4 @@
-package com.example.evide;
+package com.example;
 
 /**
  *

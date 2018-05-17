@@ -1,4 +1,4 @@
-package com.example.evide;
+package com.example;
 
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;

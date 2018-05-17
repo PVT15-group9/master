@@ -1,4 +1,4 @@
-package com.example.evide;
+package com.example;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
