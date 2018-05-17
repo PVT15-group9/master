@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.social.twitter.api.Twitter;
+import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,9 @@ public class TestController {
 
     @Autowired
     private JWTDecoder jwtDecoder;
+
+    @Autowired
+    private TwitterConfig twitterConfig;
 
     private String resultSetToJSON(ResultSet rs) {
         SimpleModule module = new SimpleModule();
@@ -183,7 +188,7 @@ public class TestController {
             JOIN transport_types t ON e.transport_type = t.id
             ORDER BY RAND()
             LIMIT 1
-        */
+         */
         String sql = "SELECT r.color, r.distance_in_meters, v.name AS 'v_name', e.name AS 'e_name', t.name AS 't_name' FROM routes r JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id ORDER BY RAND() LIMIT 1";
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -198,8 +203,8 @@ public class TestController {
                 String venue = rs.getString("v_name");
                 String endpoint = rs.getString("e_name");
                 String transportType = rs.getString("t_name");
-                
-                output += "Here's a tip! Go from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights! It's only " + distance + " meters";
+
+                output += "Here's a tip! Go from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
             }
             stmt.close();
         } catch (SQLException e) {
@@ -207,7 +212,14 @@ public class TestController {
         }
         db.disconnect();
 
-        return output;
+        Twitter twitter = new TwitterTemplate(twitterConfig.getConsumerKey(), twitterConfig.getConsumerSecret(), twitterConfig.getAccessToken(), twitterConfig.getAccessTokenSecret());
+        try {
+            twitter.timelineOperations().updateStatus(output);
+        } catch (RuntimeException ex) {
+            return "Unable to tweet" + output + ". Error:<br>" + ex;
+        }
+
+        return "Tweeted: " + output + " (" + output.length() + ")";
     }
 
     @RequestMapping("/venues")
