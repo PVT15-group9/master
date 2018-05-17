@@ -73,7 +73,7 @@ public class TestController {
         
         boolean decoded = jwtDecoder.decode(token);
         if(!decoded) {
-            return "no worko";
+            return "{\"error\" : \"jwt was not verified\"}";
         }
         
         return jwtDecoder.getPayload(token);
