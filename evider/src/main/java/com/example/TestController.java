@@ -60,7 +60,7 @@ public class TestController {
     /*
      The following two routes should be how we do it in production!
      */
-    @RequestMapping("/error")
+    @RequestMapping(value = "/error", produces = "application/json")
     public String error() {
         return "{\"error\" : \"This is a generic error!\"}";
     }
