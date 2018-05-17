@@ -1,4 +1,4 @@
-package com.example;
+package com.example.evide;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
