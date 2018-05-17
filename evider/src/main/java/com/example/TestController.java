@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -60,14 +61,9 @@ public class TestController {
     /*
      The following two routes should be how we do it in production!
      */
-    @RequestMapping(value = "/error", produces = "application/json")
-    public String error() {
-        return "{\"error\" : \"This is a generic error!\"}";
-    }
-    
     @CrossOrigin
     @RequestMapping(value = version + "routes", method = RequestMethod.GET, produces = "application/json")
-    public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader) {
+    public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") String userValue) {
         if (authHeader.length() < 7) {
             return "{\"error\" : \"Invalid Authorization header!\"}";
         }
@@ -82,7 +78,8 @@ public class TestController {
             return "{\"error\" : \"jwt was not verified\"}";
         }
         
-        return jwtDecoder.getPayload(token);
+        return "{\"user value from url\" : \"" + userValue + "\"}";
+        //return jwtDecoder.getPayload(token);
     }
 
     @RequestMapping(value = version + "venues", method = RequestMethod.GET, produces = "application/json")
