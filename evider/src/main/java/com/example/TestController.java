@@ -22,11 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-@RestController
+@Component
 public class TestController {
-
-    //Controller for scheduling
-    private static final Logger log = LoggerFactory.getLogger(TestController.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
 
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
@@ -187,7 +186,7 @@ public class TestController {
     }
 
     //@Scheduled for a scheduled "happening", 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 30000)
     @RequestMapping("/tweet")
     public String tweet() {
         cxn = db.connect();
