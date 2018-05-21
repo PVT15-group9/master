@@ -27,7 +27,6 @@ public class Scheduler {
     @Scheduled(fixedRate = RATE)
     public void reportCurrentTime() {
         LOGGER.info(this.tweet());
-
     }
 
     public String tweet() {
