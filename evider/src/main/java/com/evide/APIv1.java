@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class APIv1 {
-    
+
     private static final String version = "/api/v1/";
 
     @RequestMapping(version + "venues")

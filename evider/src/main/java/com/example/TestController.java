@@ -16,8 +16,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+// imports for scheduling
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
 @RestController
 public class TestController {
+
+    //Controller for scheduling
+    private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
@@ -177,6 +186,8 @@ public class TestController {
         return "All your scrum are belong to us";
     }
 
+    //@Scheduled for a scheduled "happening", 
+    @Scheduled(fixedRate = 5000)
     @RequestMapping("/tweet")
     public String tweet() {
         cxn = db.connect();
@@ -204,7 +215,7 @@ public class TestController {
                 String endpoint = rs.getString("e_name");
                 String transportType = rs.getString("t_name");
 
-                output += "Here's a tip! Go from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
+                output += " Get from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
             }
             stmt.close();
         } catch (SQLException e) {

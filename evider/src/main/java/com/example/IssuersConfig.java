@@ -13,7 +13,7 @@ public class IssuersConfig {
 
     @Value("#{PropertySplitter.map('${evide.issuers}')}")
     private Map<String, String> issuers;
-    
+
     public Map<String, String> getIssuers() {
         return issuers;
     }
