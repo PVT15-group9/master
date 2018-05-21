@@ -16,7 +16,7 @@ public class SensorController {
 	 * Skapar nya sensorer och sparar dem i databasen var 27: e minut.
 	 * @throws Exception
 	 */
-	@Scheduled(cron="0 0/27 * 1/1 * ? *")
+	@Scheduled(cron="0 0/27 * 1/1 * ?")
 	public void updateSensor() throws Exception{
 		try {
 			List<Object[]> events = repo.findAllEvent();
