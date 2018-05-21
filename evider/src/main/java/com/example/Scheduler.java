@@ -18,7 +18,7 @@ public class Scheduler {
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
 
-    private static final int RATE = 5 * 60 * 1000;
+    private static final int RATE = 60 * 60 * 1000;
     private static final Logger LOGGER = LoggerFactory.getLogger(Scheduler.class);
 
     @Autowired
