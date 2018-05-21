@@ -20,13 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
+@RestController
 public class TestController {
-    
-    private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
 
+    //private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
     private static final String version = "/api/v1/";
@@ -141,6 +140,7 @@ public class TestController {
         return json;
     }
 
+    // @TODO : Is this used ?
     @RequestMapping(value = version + "endpoints", method = RequestMethod.GET, produces = "application/json")
     public String getEndpointsProd() {
         // Currently hard coded, always venue id 1  (Globen)
@@ -186,7 +186,8 @@ public class TestController {
     }
 
     //@Scheduled for a scheduled "happening", 
-    @Scheduled(fixedRate = 30000)
+    //@Scheduled(fixedRate = 30000)
+    // Moved to scheduler
     @RequestMapping("/tweet")
     public String tweet() {
         cxn = db.connect();
@@ -226,10 +227,12 @@ public class TestController {
         try {
             twitter.timelineOperations().updateStatus(output);
         } catch (RuntimeException ex) {
-            return "Unable to tweet" + output + ". Error:<br>" + ex;
+            return "{\"error\" : \"Unable to tweet \"" + output + "\". Exception: " + ex + "\"}";
+            //return "Unable to tweet" + output + ". Error:<br>" + ex;
         }
 
-        return "Tweeted: " + output + " (" + output.length() + ")";
+        return "{\"error\" : \"Tweeted: " + output + " (" + output.length() + ")\"}";
+        //return "Tweeted: " + output + " (" + output.length() + ")";
     }
 
     @RequestMapping("/venues")
