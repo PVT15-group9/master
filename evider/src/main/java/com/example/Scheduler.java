@@ -1,6 +1,5 @@
+package com.example;
 
-import com.example.MySQLConnect;
-import com.example.TwitterConfig;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
