@@ -37,9 +37,9 @@ public class JWTDecoder {
 
         return true;
     }
-    
+
     public String getPayload(String token) {
         return JWT.decode(token).getPayload();
     }
-    
+
 }
