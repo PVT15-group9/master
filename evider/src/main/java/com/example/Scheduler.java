@@ -33,7 +33,7 @@ public class Scheduler {
         LOGGER.info(this.tweetLights());
     }
     
-    @Scheduled(cron="0 50 11 * * *") //sätta till kl 12:00 varje dag. 
+    @Scheduled(cron="0 53 11 * * *") //sätta till kl 12:00 varje dag. 
     public void checkDbEvents(){
         LOGGER.info(this.tweetEvent());
     }
