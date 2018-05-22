@@ -25,7 +25,7 @@ public class Scheduler {
     private TwitterConfig twitterConfig;
 
     // should run every hour at minute zero
-    @Scheduled(cron="0 * * * *")
+    @Scheduled(cron="0 0 * * * *")
     public void reportCurrentTime() {
         LOGGER.info(this.tweet());
     }
