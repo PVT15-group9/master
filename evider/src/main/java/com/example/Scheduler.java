@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Component;
+import java.util.Date;
 
 @Component
 public class Scheduler {
@@ -30,15 +33,18 @@ public class Scheduler {
         LOGGER.info(this.tweetLights());
     }
     
-    @Scheduled(cron="0 0 * * * *") //sätta till kl 12:00 varje dag. 
+    @Scheduled(cron="0 50 11 * * *") //sätta till kl 12:00 varje dag. 
     public void checkDbEvents(){
         LOGGER.info(this.tweetEvent());
     }
     
-    public void checkDbSensor(){}
-    
+    public void checkDbSensor(){
+        LOGGER.info(this.tweetSensorValue());
+    }
+        
     
     public String tweetSensorValue(){
+        
         
         return "";
     }
@@ -52,6 +58,8 @@ public class Scheduler {
         ResultSet rs;
         String output = "";
         
+        
+        
         //check in db for event same day, get name, doors time and arena. 
         try {
             stmt = cxn.prepareStatement(sql);
@@ -59,14 +67,16 @@ public class Scheduler {
             
             while (rs.next()) {
                 String name = rs.getString("e.name");
-                int startTime = rs.getInt("start_time");
+                Timestamp startTime = rs.getTimestamp("start_time");
                 String venue = rs.getString("v.name");
                 String doorsTime = rs.getString("doors_time");
                 
+                Date date = new Date(); 
                 
-                
-
-                output += "At " + venue + " today: " + name +". Doors at " + doorsTime + ", events starts at: " + startTime;
+                if (startTime.equals(date)){
+                     output += "At " + venue + " today: " + name +". Doors at " + doorsTime + ", events starts at: " + startTime;
+                }
+               
             }
             stmt.close();
         } catch (SQLException e) {
