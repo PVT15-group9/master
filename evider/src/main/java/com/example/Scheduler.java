@@ -27,25 +27,19 @@ public class Scheduler {
     @Autowired
     private TwitterConfig twitterConfig;
 
-    @Scheduled(cron="0 05 * * * *") //sätta till kl 12:00 varje dag. 
+    @Scheduled(cron="0 30 12 * * *") //sätta till kl 12:00 varje dag. 
     public void checkDbEvents(){
         LOGGER.info(this.tweetEvent());
     }
-
-
-
     // should run every hour at minute zero
     @Scheduled(cron="0 0 * * * *")
     public void checkDbLights() {
         LOGGER.info(this.tweetLights());
     }
-
-    
     public void checkDbSensor(){
         LOGGER.info(this.tweetSensorValue());
     }
-        
-    
+   
     public String tweetSensorValue(){
         
         
@@ -60,6 +54,7 @@ public class Scheduler {
         PreparedStatement stmt;
         ResultSet rs;
         String output = "";
+        
          
         try {
             stmt = cxn.prepareStatement(sql);
@@ -71,19 +66,21 @@ public class Scheduler {
                 String venue = rs.getString("v.name");
                 String doorsTime = rs.getString("doors_time");
                 
+                System.out.println(name + " " + startTime + " " + venue +" "+ doorsTime);
+                
                 Timestamp t = new Timestamp(System.currentTimeMillis());
                     String t0 = t.toString();
                     String[] parts = t0.split(" ");
                     String t1 = parts[0]; 
                 
                     String s0 = startTime.toString();
-                    String[] parts2 = t0.split(" ");
+                    String[] parts2 = s0.split(" ");
                     String s1 = parts2[0]; 
                 
                 
-               // if (t1.equals(s1)){
+                if (t1.equals(s1)){
                      output += "At " + venue + " today: " + name +". Doors at " + doorsTime + ", events starts at: " + startTime;
-              //  }
+                }
                
             }
             stmt.close();
@@ -108,15 +105,7 @@ public class Scheduler {
 
     public String tweetLights() {
         cxn = db.connect();
-        /*
-            SELECT r.color, r.distance_in_meters, v.name AS 'v_name', e.name AS 'e_name', t.name AS 't_name'
-            FROM routes r
-            JOIN venues v ON r.venue_id = v.id
-            JOIN endpoints e ON r.endpoint_id = e.id
-            JOIN transport_types t ON e.transport_type = t.id
-            ORDER BY RAND()
-            LIMIT 1
-         */
+        
         String sql = "SELECT r.color, r.distance_in_meters, v.name AS 'v_name', e.name AS 'e_name', t.name AS 't_name' FROM routes r JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id ORDER BY RAND() LIMIT 1";
         PreparedStatement stmt;
         ResultSet rs;
