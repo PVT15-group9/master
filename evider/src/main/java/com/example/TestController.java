@@ -187,6 +187,7 @@ public class TestController {
         db.disconnect();
         return json;
     }
+    // END production routes
 
     /*
         Test route for sensors
@@ -203,6 +204,39 @@ public class TestController {
     /*
         The routes below are test routes...
      */
+    @RequestMapping("/eventToday")
+    public String eventToday() {
+        cxn = db.connect();
+        String sql = "SELECT v.name AS 'venue_name', e.name AS 'event_name', e.doors_time, e.start_time, e.end_time, e.event_url FROM events e JOIN venues v ON e.venue_id = v.id WHERE DATE(start_time) = CURRENT_DATE()";
+        PreparedStatement stmt;
+        ResultSet rs;
+        String output = "";
+
+        try {
+            stmt = cxn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String eventName = rs.getString("event_name");
+                String venueName = rs.getString("venue_name");
+                
+                String doorsTime = rs.getString("doors_time");
+                String startTime = rs.getString("doors_time");
+                String endTime = rs.getString("doors_time");
+                
+                String eventUrl = rs.getString("event_url");
+                
+                output += "At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime + "<br>";
+
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
+        db.disconnect();
+        return output;
+    }
+
     @RequestMapping("/venues")
     public String getVenues() {
         cxn = db.connect();
