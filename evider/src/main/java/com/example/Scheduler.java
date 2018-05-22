@@ -33,7 +33,7 @@ public class Scheduler {
         LOGGER.info(this.tweetLights());
     }
     
-    @Scheduled(cron="0 50 11 * * *") //sätta till kl 12:00 varje dag. 
+    @Scheduled(cron="0 0 16 * * *") //sätta till kl 12:00 varje dag. 
     public void checkDbEvents(){
         LOGGER.info(this.tweetEvent());
     }
@@ -57,10 +57,7 @@ public class Scheduler {
         PreparedStatement stmt;
         ResultSet rs;
         String output = "";
-        
-        
-        
-        //check in db for event same day, get name, doors time and arena. 
+         
         try {
             stmt = cxn.prepareStatement(sql);
             rs = stmt.executeQuery();
@@ -71,9 +68,17 @@ public class Scheduler {
                 String venue = rs.getString("v.name");
                 String doorsTime = rs.getString("doors_time");
                 
-                Date date = new Date(); 
+                Timestamp t = new Timestamp(System.currentTimeMillis());
+                    String t0 = t.toString();
+                    String[] parts = t0.split(" ");
+                    String t1 = parts[0]; 
                 
-                if (startTime.equals(date)){
+                    String s0 = startTime.toString();
+                    String[] parts2 = t0.split(" ");
+                    String s1 = parts2[0]; 
+                
+                
+                if (t1.equals(s1)){
                      output += "At " + venue + " today: " + name +". Doors at " + doorsTime + ", events starts at: " + startTime;
                 }
                
