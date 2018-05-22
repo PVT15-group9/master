@@ -252,6 +252,15 @@ public class TestController {
         db.disconnect();
         return json;
     }
+    
+    @RequestMapping("/sensors")
+    public String getSensors() {
+        cxn = db.connect();
+        String sql = "SELECT * FROM sensor";
+        String json = this.executeQueryAndPrintResult(sql);
+        db.disconnect();
+        return json;
+    }
 
     @CrossOrigin
     @RequestMapping("/jwtSharp")

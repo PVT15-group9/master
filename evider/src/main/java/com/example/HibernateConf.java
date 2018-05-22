@@ -22,7 +22,7 @@ public class HibernateConf {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan(new String[] { "com.sensor.model" });
+        sessionFactory.setPackagesToScan(new String[] { "com.example.model" });
         sessionFactory.setHibernateProperties(hibernateProperties());
  
         return sessionFactory;
@@ -51,7 +51,7 @@ public class HibernateConf {
         hibernateProperties.setProperty(
                 "hibernate.hbm2ddl.auto", "create-drop");
         hibernateProperties.setProperty(
-          "hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+          "hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
  
         return hibernateProperties;
     }
