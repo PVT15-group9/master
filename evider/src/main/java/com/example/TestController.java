@@ -93,8 +93,44 @@ public class TestController {
     }
 
     /*
-     The following two routes should be how we do it in production!
+     The following routes should be how we do it in production!
      */
+    @CrossOrigin
+    @RequestMapping(value = version + "route", method = RequestMethod.GET, produces = "application/json")
+    public String getRouteById(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
+        if (authHeader.length() < 7) {
+            return "{\"error\" : \"Invalid Authorization header!\"}";
+        }
+        if (!authHeader.substring(0, 7).equals("Bearer ")) {
+            return "{\"error\" : \"Malformed Authorization header!\"}";
+        }
+
+        String token = authHeader.substring(7);
+
+        boolean decoded = jwtDecoder.decode(token);
+        if (!decoded) {
+            return "{\"error\" : \"jwt was not verified : " + token + "\"}";
+        }
+
+        cxn = db.connect();
+        String sql = "SELECT  r.id AS 'route_id', r.endpoint_id , e.transport_type,  e.name AS 'e_name', t.name AS 't_name', r.venue_id,  e.SL_SITE_ID, t.img_url AS 'icon', 'https://res.cloudinary.com/pvt-group09/image/upload/v1525786167/sensor-red.png' AS 'crowd_indicator', r.distance_in_meters, r.color, r.color_hex, CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.id = ?  ORDER BY r.distance_in_meters ASC";
+
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            stmt = cxn.prepareStatement(sql);
+            stmt.setInt(1, userValue);
+            rs = stmt.executeQuery();
+        } catch (SQLException e) {
+            return "{\"error\" : \"error in sql\"}";
+        }
+
+        String output = this.resultSetToJSON(rs);
+        db.disconnect();
+        return output;
+    }
+    
     @CrossOrigin
     @RequestMapping(value = version + "routes", method = RequestMethod.GET, produces = "application/json")
     public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
