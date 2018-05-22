@@ -19,6 +19,11 @@ public class JWTDecoder {
     @Autowired
     private IssuersConfig issuers;
 
+    /**
+     * 
+     * @param token A JWT to be verified. 
+     * @return true if the token can be verified, false if not
+     */
     public boolean decode(String token) {
         DecodedJWT jwtUnverified = JWT.decode(token);
         String iss = jwtUnverified.getIssuer();
@@ -38,8 +43,21 @@ public class JWTDecoder {
         return true;
     }
 
+    /**
+     * 
+     * @param token A valid JWT
+     * @return The payload of the token
+     */
     public String getPayload(String token) {
         return JWT.decode(token).getPayload();
     }
 
+    /**
+     * 
+     * @param header The authorization header
+     * @return null if the header is malformed or the token if it's correct
+     */
+    public String validateHeader(String header) {
+        return (header.length() < 7 || !header.substring(0, 7).equals("Bearer ")) ? null : header.substring(7);
+    }
 }
