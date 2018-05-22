@@ -173,12 +173,12 @@ public class TestController {
     public String getVenuesProd(@RequestHeader("Authorization") String authHeader) {
         String token = jwtDecoder.validateHeader(authHeader);
         if (token == null) {
-            return "{\"error\" : \"Invalid Authorization header! (#2)\"}";
+            return IOHelper.errorAsJSON("Invalid Authorization header! (#2)");
         }
 
         boolean decoded = jwtDecoder.decode(token);
         if (!decoded) {
-            return "{\"error\" : \"jwt was not verified : " + token + "\"}";
+            return IOHelper.errorAsJSON("JWT was not verified : " + token);
         }
 
         cxn = db.connect();

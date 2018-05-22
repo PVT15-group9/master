@@ -14,4 +14,8 @@ public class IOHelper {
         output += "</pre>";
         return output;
     }
+
+    public static String errorAsJSON(String error) {
+        return "{\"error\" : \"" + error + "\"}";
+    }
 }
