@@ -20,13 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
+@RestController
 public class TestController {
-    
-    private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
 
+    //private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
     private static final String version = "/api/v1/";
@@ -94,8 +93,44 @@ public class TestController {
     }
 
     /*
-     The following two routes should be how we do it in production!
+     The following routes should be how we do it in production!
      */
+    @CrossOrigin
+    @RequestMapping(value = version + "route", method = RequestMethod.GET, produces = "application/json")
+    public String getRouteById(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
+        if (authHeader.length() < 7) {
+            return "{\"error\" : \"Invalid Authorization header!\"}";
+        }
+        if (!authHeader.substring(0, 7).equals("Bearer ")) {
+            return "{\"error\" : \"Malformed Authorization header!\"}";
+        }
+
+        String token = authHeader.substring(7);
+
+        boolean decoded = jwtDecoder.decode(token);
+        if (!decoded) {
+            return "{\"error\" : \"jwt was not verified : " + token + "\"}";
+        }
+
+        cxn = db.connect();
+        String sql = "SELECT  r.id AS 'route_id', r.endpoint_id , e.transport_type,  e.name AS 'e_name', t.name AS 't_name', r.venue_id,  e.SL_SITE_ID, t.img_url AS 'icon', 'https://res.cloudinary.com/pvt-group09/image/upload/v1525786167/sensor-red.png' AS 'crowd_indicator', r.distance_in_meters, r.color, r.color_hex, CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.id = ?  ORDER BY r.distance_in_meters ASC";
+
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            stmt = cxn.prepareStatement(sql);
+            stmt.setInt(1, userValue);
+            rs = stmt.executeQuery();
+        } catch (SQLException e) {
+            return "{\"error\" : \"error in sql\"}";
+        }
+
+        String output = this.resultSetToJSON(rs);
+        db.disconnect();
+        return output;
+    }
+    
     @CrossOrigin
     @RequestMapping(value = version + "routes", method = RequestMethod.GET, produces = "application/json")
     public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
@@ -141,6 +176,7 @@ public class TestController {
         return json;
     }
 
+    // @TODO : Is this used ?
     @RequestMapping(value = version + "endpoints", method = RequestMethod.GET, produces = "application/json")
     public String getEndpointsProd() {
         // Currently hard coded, always venue id 1  (Globen)
@@ -186,7 +222,8 @@ public class TestController {
     }
 
     //@Scheduled for a scheduled "happening", 
-    @Scheduled(fixedRate = 30000)
+    //@Scheduled(fixedRate = 30000)
+    // Moved to scheduler
     @RequestMapping("/tweet")
     public String tweet() {
         cxn = db.connect();
@@ -226,10 +263,12 @@ public class TestController {
         try {
             twitter.timelineOperations().updateStatus(output);
         } catch (RuntimeException ex) {
-            return "Unable to tweet" + output + ". Error:<br>" + ex;
+            return "{\"error\" : \"Unable to tweet \"" + output + "\". Exception: " + ex + "\"}";
+            //return "Unable to tweet" + output + ". Error:<br>" + ex;
         }
 
-        return "Tweeted: " + output + " (" + output.length() + ")";
+        return "{\"error\" : \"Tweeted: " + output + " (" + output.length() + ")\"}";
+        //return "Tweeted: " + output + " (" + output.length() + ")";
     }
 
     @RequestMapping("/venues")
@@ -245,6 +284,15 @@ public class TestController {
     public String getEvents() {
         cxn = db.connect();
         String sql = "SELECT events.id, events.name, venues.name FROM events INNER JOIN venues ON events.venue_id = venues.id";
+        String json = this.executeQueryAndPrintResult(sql);
+        db.disconnect();
+        return json;
+    }
+    
+    @RequestMapping("/sensors")
+    public String getSensors() {
+        cxn = db.connect();
+        String sql = "SELECT * FROM sensor";
         String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
         return json;
