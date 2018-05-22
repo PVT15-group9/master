@@ -26,8 +26,8 @@ public class TestController {
     @Autowired
     private JWTDecoder jwtDecoder;
 
-    //@Autowired
-    //private TwitterConfig twitterConfig;
+    @Autowired
+    private TwitterConfig twitterConfig;
 
     // Base route
     @RequestMapping("/")
@@ -206,7 +206,10 @@ public class TestController {
      */
     @RequestMapping("/eventToday")
     public String eventToday() {
-        TwitterHelper th = new TwitterHelper();
+        //TwitterHelper th = new TwitterHelper();
+
+        Twitter twitter = new TwitterTemplate(twitterConfig.getConsumerKey(), twitterConfig.getConsumerSecret(), twitterConfig.getAccessToken(), twitterConfig.getAccessTokenSecret());
+
         cxn = db.connect();
         String sql = "SELECT v.name AS 'venue_name', e.name AS 'event_name', e.doors_time, e.start_time, e.end_time, e.event_url FROM events e JOIN venues v ON e.venue_id = v.id WHERE DATE(start_time) = CURRENT_DATE() OR DATE(doors_time) = CURRENT_DATE()";
         PreparedStatement stmt;
@@ -219,15 +222,20 @@ public class TestController {
             while (rs.next()) {
                 String eventName = rs.getString("event_name");
                 String venueName = rs.getString("venue_name");
-                
+
                 String doorsTime = rs.getString("doors_time");
                 String startTime = rs.getString("doors_time");
                 String endTime = rs.getString("doors_time");
-                
+
                 String eventUrl = rs.getString("event_url");
-                
+
                 String output = "At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime;
-                th.makeTweet(output);
+                try {
+                    twitter.timelineOperations().updateStatus(output);
+                } catch (RuntimeException ex) {
+                    // log the error
+                    return "Could not tweet : " + ex.getMessage();
+                }
             }
             stmt.close();
         } catch (SQLException e) {
