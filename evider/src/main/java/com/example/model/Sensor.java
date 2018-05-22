@@ -94,7 +94,7 @@ public class Sensor {
      */
     private static final int SENSOR_START_VALUE = 30;
     /**
-     * hur många minuter som ska vridas tillbaka för att bestämma sensorns
+     * hur många minuter som ska vridas framåt för att bestämma sensorns
      * sluttid
      */
     private static final int SENSOR_END_VALUE = 90;
