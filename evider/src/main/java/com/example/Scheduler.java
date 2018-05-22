@@ -27,6 +27,11 @@ public class Scheduler {
     @Autowired
     private TwitterConfig twitterConfig;
 
+     @Scheduled(cron="0 10 * * * *") //sätta till kl 12:00 varje dag. 
+    public void checkDbEvents(){
+        LOGGER.info(this.tweetEvent());
+    }
+    
     // should run every hour at minute zero
     @Scheduled(cron="0 0 * * * *")
     public void checkDbLights() {
@@ -34,10 +39,7 @@ public class Scheduler {
     }
     
 
-    @Scheduled(cron="0 0 16 * * *") //sätta till kl 12:00 varje dag. 
-    public void checkDbEvents(){
-        LOGGER.info(this.tweetEvent());
-    }
+   
     
     public void checkDbSensor(){
         LOGGER.info(this.tweetSensorValue());
