@@ -26,8 +26,11 @@ public class TestController {
     @Autowired
     private JWTDecoder jwtDecoder;
 
+    //@Autowired
+    //private TwitterConfig twitterConfig;
+
     @Autowired
-    private TwitterConfig twitterConfig;
+    private TwitterHelper twitterHelper;
 
     // Base route
     @RequestMapping("/")
@@ -207,8 +210,7 @@ public class TestController {
     @RequestMapping("/eventToday")
     public String eventToday() {
         //TwitterHelper th = new TwitterHelper();
-
-        Twitter twitter = new TwitterTemplate(twitterConfig.getConsumerKey(), twitterConfig.getConsumerSecret(), twitterConfig.getAccessToken(), twitterConfig.getAccessTokenSecret());
+        //Twitter twitter = new TwitterTemplate(twitterConfig.getConsumerKey(), twitterConfig.getConsumerSecret(), twitterConfig.getAccessToken(), twitterConfig.getAccessTokenSecret());
 
         cxn = db.connect();
         String sql = "SELECT v.name AS 'venue_name', e.name AS 'event_name', e.doors_time, e.start_time, e.end_time, e.event_url FROM events e JOIN venues v ON e.venue_id = v.id WHERE DATE(start_time) = CURRENT_DATE() OR DATE(doors_time) = CURRENT_DATE()";
@@ -229,13 +231,18 @@ public class TestController {
 
                 String eventUrl = rs.getString("event_url");
 
-                String output = "At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime;
+                String output = "(TH) At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime;
+                if(!twitterHelper.makeTweet(output)) {
+                    return "Error when making tweet!";
+                }
+                /*
                 try {
                     twitter.timelineOperations().updateStatus(output);
                 } catch (RuntimeException ex) {
                     // log the error
                     return "Could not tweet : " + ex.getMessage();
                 }
+                 */
             }
             stmt.close();
         } catch (SQLException e) {
