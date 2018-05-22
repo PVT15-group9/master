@@ -26,8 +26,8 @@ public class TestController {
     @Autowired
     private JWTDecoder jwtDecoder;
 
-    @Autowired
-    private TwitterConfig twitterConfig;
+    //@Autowired
+    //private TwitterConfig twitterConfig;
 
     // Base route
     @RequestMapping("/")
