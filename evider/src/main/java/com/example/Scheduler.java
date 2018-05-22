@@ -25,12 +25,30 @@ public class Scheduler {
     private TwitterConfig twitterConfig;
 
     // should run every hour at minute zero
-    @Scheduled(cron="0 0 * * * *")
-    public void reportCurrentTime() {
-        LOGGER.info(this.tweet());
+    //@Scheduled(cron="0 0 * * * *")
+    public void checkDbLights() {
+        LOGGER.info(this.tweetLights());
+    }
+    
+    //@Scheduled(cron="0 0 * * * *") //sätta till kl 12:00 varje dag. 
+    public void checkDbEvents(){
+        LOGGER.info(this.tweetEvent());
+    }
+    
+    public void checkDbSensor(){}
+    
+    
+    public String tweetSensor(){
+        return "";
+    }
+    
+    
+    public String tweetEvent(){
+        //check in db for event same day, get name, doors time and arena. 
+        return ""; 
     }
 
-    public String tweet() {
+    public String tweetLights() {
         cxn = db.connect();
         /*
             SELECT r.color, r.distance_in_meters, v.name AS 'v_name', e.name AS 'e_name', t.name AS 't_name'
