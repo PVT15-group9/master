@@ -20,8 +20,8 @@ public class JWTDecoder {
     private IssuersConfig issuers;
 
     /**
-     * 
-     * @param token A JWT to be verified. 
+     *
+     * @param token A JWT to be verified.
      * @return true if the token can be verified, false if not
      */
     public boolean decode(String token) {
@@ -44,7 +44,7 @@ public class JWTDecoder {
     }
 
     /**
-     * 
+     *
      * @param token A valid JWT
      * @return The payload of the token
      */
@@ -53,7 +53,7 @@ public class JWTDecoder {
     }
 
     /**
-     * 
+     *
      * @param header The authorization header
      * @return null if the header is malformed or the token if it's correct
      */

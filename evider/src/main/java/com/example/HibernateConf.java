@@ -9,25 +9,27 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 /**
  * Håller upp kopplingen mellan en databas och ett API.
+ *
  * @author Dmitri
  *
  */
 @Configuration
 @EnableTransactionManagement
 public class HibernateConf {
- 
+
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan(new String[] { "com.example.model" });
+        sessionFactory.setPackagesToScan(new String[]{"com.example.model"});
         sessionFactory.setHibernateProperties(hibernateProperties());
- 
+
         return sessionFactory;
     }
- 
+
     @Bean
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
@@ -37,22 +39,22 @@ public class HibernateConf {
         dataSource.setPassword("iw8seeCh8ag9");
         return dataSource;
     }
- 
+
     @Bean
     public PlatformTransactionManager hibernateTransactionManager() {
         HibernateTransactionManager transactionManager
-          = new HibernateTransactionManager();
+                = new HibernateTransactionManager();
         transactionManager.setSessionFactory(sessionFactory().getObject());
         return transactionManager;
     }
- 
+
     private final Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
         hibernateProperties.setProperty(
                 "hibernate.hbm2ddl.auto", "create-drop");
         hibernateProperties.setProperty(
-          "hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
- 
+                "hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
+
         return hibernateProperties;
     }
 }
