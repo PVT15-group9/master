@@ -30,10 +30,10 @@ public class Scheduler {
         LOGGER.info(this.tweetLights());
     }
     
-   /* @Scheduled(cron="0 0 * * * *") //sätta till kl 12:00 varje dag. 
+    @Scheduled(cron="0 0 * * * *") //sätta till kl 12:00 varje dag. 
     public void checkDbEvents(){
         LOGGER.info(this.tweetEvent());
-    }*/
+    }
     
     public void checkDbSensor(){}
     
@@ -43,7 +43,7 @@ public class Scheduler {
         return "";
     }
        
-    /*
+    
     public String tweetEvent(){
         cxn = db.connect();
       
@@ -56,14 +56,17 @@ public class Scheduler {
         try {
             stmt = cxn.prepareStatement(sql);
             rs = stmt.executeQuery();
+            
             while (rs.next()) {
-                String name = rs.getString("name");
-                int distance = rs.getInt("distance_in_meters");
-                String venue = rs.getString("v_name");
-                String endpoint = rs.getString("e_name");
-                String transportType = rs.getString("t_name");
+                String name = rs.getString("e.name");
+                int startTime = rs.getInt("start_time");
+                String venue = rs.getString("v.name");
+                String doorsTime = rs.getString("doors_time");
+                
+                
+                
 
-                output += " Get from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
+                output += "At " + venue + " today: " + name +". Doors at " + doorsTime + ", events starts at: " + startTime;
             }
             stmt.close();
         } catch (SQLException e) {
@@ -83,7 +86,7 @@ public class Scheduler {
         //return "{\"error\" : \"Tweeted: " + output + " (" + output.length() + ")\"}";
         return "Tweeted: " + output + " (" + output.length() + ")";
        
-    } */
+    } 
 
     public String tweetLights() {
         cxn = db.connect();
