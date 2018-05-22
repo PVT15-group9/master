@@ -210,7 +210,8 @@ public class TestController {
         String sql = "SELECT v.name AS 'venue_name', e.name AS 'event_name', e.doors_time, e.start_time, e.end_time, e.event_url FROM events e JOIN venues v ON e.venue_id = v.id WHERE DATE(start_time) = CURRENT_DATE() OR DATE(doors_time) = CURRENT_DATE()";
         PreparedStatement stmt;
         ResultSet rs;
-        String output = "";
+        
+        TwitterHelper th = new TwitterHelper();
 
         try {
             stmt = cxn.prepareStatement(sql);
@@ -226,7 +227,10 @@ public class TestController {
                 
                 String eventUrl = rs.getString("event_url");
                 
-                output += "At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime + "<br>";
+                String output = "At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime;
+                if(!th.makeTweet(output)) {
+                    return "Error when making tweet";
+                }
 
             }
             stmt.close();
@@ -234,7 +238,7 @@ public class TestController {
             return "Error in SQL : " + e;
         }
         db.disconnect();
-        return output;
+        return "Done";
     }
 
     @RequestMapping("/venues")
