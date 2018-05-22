@@ -26,17 +26,18 @@ public class Scheduler {
 
     @Autowired
     private TwitterConfig twitterConfig;
-
+    
+    @Scheduled(cron="0 05 * * * *") //sätta till kl 12:00 varje dag. 
+    public void checkDbEvents(){
+        LOGGER.info(this.tweetEvent());
+    }
     // should run every hour at minute zero
     @Scheduled(cron="0 0 * * * *")
     public void checkDbLights() {
         LOGGER.info(this.tweetLights());
     }
     
-    @Scheduled(cron="0 0 16 * * *") //sätta till kl 12:00 varje dag. 
-    public void checkDbEvents(){
-        LOGGER.info(this.tweetEvent());
-    }
+   
     
     public void checkDbSensor(){
         LOGGER.info(this.tweetSensorValue());
@@ -78,9 +79,9 @@ public class Scheduler {
                     String s1 = parts2[0]; 
                 
                 
-                if (t1.equals(s1)){
+               // if (t1.equals(s1)){
                      output += "At " + venue + " today: " + name +". Doors at " + doorsTime + ", events starts at: " + startTime;
-                }
+              //  }
                
             }
             stmt.close();
