@@ -25,28 +25,65 @@ public class Scheduler {
     private TwitterConfig twitterConfig;
 
     // should run every hour at minute zero
-    //@Scheduled(cron="0 0 * * * *")
+    @Scheduled(cron="0 0 * * * *")
     public void checkDbLights() {
         LOGGER.info(this.tweetLights());
     }
     
-    //@Scheduled(cron="0 0 * * * *") //sätta till kl 12:00 varje dag. 
+   /* @Scheduled(cron="0 0 * * * *") //sätta till kl 12:00 varje dag. 
     public void checkDbEvents(){
         LOGGER.info(this.tweetEvent());
-    }
+    }*/
     
     public void checkDbSensor(){}
     
     
-    public String tweetSensor(){
+    public String tweetSensorValue(){
+        
         return "";
     }
-    
-    
+       
+    /*
     public String tweetEvent(){
+        cxn = db.connect();
+      
+        String sql = "SELECT e.name, e.venue_id, e.start_time, e.doors_time, e.event_url FROM events e, JOIN venues v ON e.venue_id = v.id" ;
+        PreparedStatement stmt;
+        ResultSet rs;
+        String output = "";
+        
         //check in db for event same day, get name, doors time and arena. 
-        return ""; 
-    }
+        try {
+            stmt = cxn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString("name");
+                int distance = rs.getInt("distance_in_meters");
+                String venue = rs.getString("v_name");
+                String endpoint = rs.getString("e_name");
+                String transportType = rs.getString("t_name");
+
+                output += " Get from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+            //return "{\"error\" : \"error in sql\"}";
+        }
+        db.disconnect();
+
+        Twitter twitter = new TwitterTemplate(twitterConfig.getConsumerKey(), twitterConfig.getConsumerSecret(), twitterConfig.getAccessToken(), twitterConfig.getAccessTokenSecret());
+        try {
+            twitter.timelineOperations().updateStatus(output);
+        } catch (RuntimeException ex) {
+            //return "{\"error\" : \"Unable to tweet \"" + output + "\". Exception: " + ex + "\"}";
+            return "Unable to tweet" + output + ". Error:<br>" + ex;
+        }
+
+        //return "{\"error\" : \"Tweeted: " + output + " (" + output.length() + ")\"}";
+        return "Tweeted: " + output + " (" + output.length() + ")";
+       
+    } */
 
     public String tweetLights() {
         cxn = db.connect();
