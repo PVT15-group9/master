@@ -18,6 +18,7 @@ public class Scheduler {
 
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
+    String output;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Scheduler.class);
 
@@ -27,7 +28,7 @@ public class Scheduler {
     @Autowired
     private TwitterHelper twitterHelper;
 
-    @Scheduled(cron = "0 30 12 * * *") //sätta till kl 12:00 varje dag. 
+    @Scheduled(cron = "0 10 12 * * *") //sätta till kl 12:00 varje dag. 
     public void checkDbEvents() {
         LOGGER.info(this.tweetEvent());
     }
@@ -67,7 +68,7 @@ public class Scheduler {
 
                 String eventUrl = rs.getString("event_url");
 
-                String output = "At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime;
+                output = "At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime;
                 if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
@@ -98,24 +99,16 @@ public class Scheduler {
                 String endpoint = rs.getString("e_name");
                 String transportType = rs.getString("t_name");
 
-                output += " Get from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
+                output = " Get from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
+            if (!twitterHelper.makeTweet(output)) {
+                    return "Error when making tweet!";
+                }
             }
             stmt.close();
         } catch (SQLException e) {
             return "Error in SQL : " + e;
-            //return "{\"error\" : \"error in sql\"}";
         }
         db.disconnect();
-
-        Twitter twitter = new TwitterTemplate(twitterConfig.getConsumerKey(), twitterConfig.getConsumerSecret(), twitterConfig.getAccessToken(), twitterConfig.getAccessTokenSecret());
-        try {
-            twitter.timelineOperations().updateStatus(output);
-        } catch (RuntimeException ex) {
-            //return "{\"error\" : \"Unable to tweet \"" + output + "\". Exception: " + ex + "\"}";
-            return "Unable to tweet" + output + ". Error:<br>" + ex;
-        }
-
-        //return "{\"error\" : \"Tweeted: " + output + " (" + output.length() + ")\"}";
-        return "Tweeted: " + output + " (" + output.length() + ")";
+        return "Done";
     }
 }
