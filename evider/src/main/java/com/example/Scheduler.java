@@ -28,7 +28,8 @@ public class Scheduler {
     @Autowired
     private TwitterHelper twitterHelper;
 
-    @Scheduled(cron = "0 10 12 * * *") //sätta till kl 12:00 varje dag. 
+    //Runs at noon
+    @Scheduled(cron = "0 10 12 * * *") 
     public void checkDbEvents() {
         LOGGER.info(this.tweetEvent());
     }
@@ -39,13 +40,43 @@ public class Scheduler {
         LOGGER.info(this.tweetLights());
     }
 
+    @Scheduled(cron = "0 * * * * *")
     public void checkDbSensor() {
         LOGGER.info(this.tweetSensorValue());
     }
 
     public String tweetSensorValue() {
+        cxn = db.connect();
+        String sql = "SELECT s.simulated_value FROM simulated_value s";
+        PreparedStatement stmt;
+        ResultSet rs;
 
-        return "";
+        try {
+            stmt = cxn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String eventName = rs.getString("event_name");
+                String venueName = rs.getString("venue_name");
+
+                String doorsTime = rs.getString("doors_time");
+                String startTime = rs.getString("start_time");
+                String endTime = rs.getString("end_time");
+
+                String eventUrl = rs.getString("event_url");
+                //check if crowded on a route 
+                
+                output = "At " + venueName + " today: " + eventName + ". Doors open at " + doorsTime + ", and the events starts at: " + startTime;
+                if (!twitterHelper.makeTweet(output)) {
+                    return "Error when making tweet!";
+                }
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
+        db.disconnect();
+        return "Done";
     }
 
     public String tweetEvent() {
@@ -68,7 +99,7 @@ public class Scheduler {
 
                 String eventUrl = rs.getString("event_url");
 
-                output = "At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime;
+                output = "At " + venueName + " today: " + eventName + "\n. Doors open at " + doorsTime + ", and the events starts at: " + startTime;
                 if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
@@ -100,7 +131,7 @@ public class Scheduler {
                 String transportType = rs.getString("t_name");
 
                 output = " Get from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
-            if (!twitterHelper.makeTweet(output)) {
+                if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
             }
