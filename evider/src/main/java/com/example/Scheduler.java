@@ -29,7 +29,7 @@ public class Scheduler {
     private TwitterHelper twitterHelper;
 
     //Runs at noon
-    @Scheduled(cron = "0 10 12 * * *") 
+    @Scheduled(cron = "0 52 12 * * *") 
     public void checkDbEvents() {
         LOGGER.info(this.tweetEvent());
     }
