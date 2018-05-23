@@ -28,7 +28,6 @@ public class TestController {
 
     //@Autowired
     //private TwitterConfig twitterConfig;
-
     @Autowired
     private TwitterHelper twitterHelper;
 
@@ -100,27 +99,54 @@ public class TestController {
      Production routes
      */
     @CrossOrigin
-    @RequestMapping(value = version + "route", method = RequestMethod.GET, produces = "application/json")
-    public String getRouteById(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
-        if (authHeader.length() < 7) {
-            return "{\"error\" : \"Invalid Authorization header!\"}";
+    @RequestMapping(value = version + "venueHasEvent", method = RequestMethod.GET, produces = "application/json")
+    public String venueHasEvent(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
+        String token = jwtDecoder.validateHeader(authHeader);
+        if (token == null) {
+            return IOHelper.errorAsJSON("Invalid Authorization header! (#2)");
         }
-        if (!authHeader.substring(0, 7).equals("Bearer ")) {
-            return "{\"error\" : \"Malformed Authorization header!\"}";
-        }
-
-        String token = authHeader.substring(7);
 
         boolean decoded = jwtDecoder.decode(token);
         if (!decoded) {
-            return "{\"error\" : \"jwt was not verified : " + token + "\"}";
+            return IOHelper.errorAsJSON("JWT was not verified : " + token);
+        }
+
+        cxn = db.connect();
+        String sql = "SELECT * FROM events WHERE venue_id = ? AND ((DATE(start_time) = SUBDATE(CURRENT_DATE(), 1) OR DATE(doors_time) = SUBDATE(CURRENT_DATE(), 1)) OR (DATE(start_time) = CURRENT_DATE() OR DATE(doors_time) = CURRENT_DATE()))";
+        PreparedStatement stmt;
+        ResultSet rs;
+
+        try {
+            stmt = cxn.prepareStatement(sql);
+            stmt.setInt(1, userValue);
+            rs = stmt.executeQuery();
+        } catch (SQLException e) {
+            return "{\"error\" : \"error in sql\"}";
+        }
+
+        String output = this.resultSetToJSON(rs);
+        db.disconnect();
+        return output;
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = version + "route", method = RequestMethod.GET, produces = "application/json")
+    public String getRouteById(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
+        String token = jwtDecoder.validateHeader(authHeader);
+        if (token == null) {
+            return IOHelper.errorAsJSON("Invalid Authorization header! (#2)");
+        }
+
+        boolean decoded = jwtDecoder.decode(token);
+        if (!decoded) {
+            return IOHelper.errorAsJSON("JWT was not verified : " + token);
         }
 
         cxn = db.connect();
         String sql = "SELECT  r.id AS 'route_id', r.endpoint_id , e.transport_type,  e.name AS 'e_name', t.name AS 't_name', r.venue_id,  e.SL_SITE_ID, t.img_url AS 'icon', (SELECT url FROM crowd_indicators ORDER BY RAND() LIMIT 1) AS 'crowd_indicator', r.distance_in_meters, r.color, r.color_hex, CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.id = ?  ORDER BY r.distance_in_meters ASC";
 
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PreparedStatement stmt;
+        ResultSet rs;
 
         try {
             stmt = cxn.prepareStatement(sql);
@@ -138,25 +164,21 @@ public class TestController {
     @CrossOrigin
     @RequestMapping(value = version + "routes", method = RequestMethod.GET, produces = "application/json")
     public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
-        if (authHeader.length() < 7) {
-            return "{\"error\" : \"Invalid Authorization header!\"}";
+        String token = jwtDecoder.validateHeader(authHeader);
+        if (token == null) {
+            return IOHelper.errorAsJSON("Invalid Authorization header! (#2)");
         }
-        if (!authHeader.substring(0, 7).equals("Bearer ")) {
-            return "{\"error\" : \"Malformed Authorization header!\"}";
-        }
-
-        String token = authHeader.substring(7);
 
         boolean decoded = jwtDecoder.decode(token);
         if (!decoded) {
-            return "{\"error\" : \"jwt was not verified : " + token + "\"}";
+            return IOHelper.errorAsJSON("JWT was not verified : " + token);
         }
 
         cxn = db.connect();
         String sql = "SELECT  r.id AS 'route_id', r.endpoint_id , e.transport_type,  e.name AS 'e_name', t.name AS 't_name', r.venue_id,  e.SL_SITE_ID, t.img_url AS 'icon', (SELECT url FROM crowd_indicators ORDER BY RAND() LIMIT 1) AS 'crowd_indicator', r.distance_in_meters, r.color, r.color_hex, CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.venue_id = ?  ORDER BY r.distance_in_meters ASC";
 
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PreparedStatement stmt;
+        ResultSet rs;
 
         try {
             stmt = cxn.prepareStatement(sql);
@@ -211,7 +233,7 @@ public class TestController {
     public String eventToday() {
         //TwitterHelper th = new TwitterHelper();
         //Twitter twitter = new TwitterTemplate(twitterConfig.getConsumerKey(), twitterConfig.getConsumerSecret(), twitterConfig.getAccessToken(), twitterConfig.getAccessTokenSecret());
-        
+
 //        cxn = db.connect();
 //        String sql = "SELECT v.name AS 'venue_name', e.name AS 'event_name', e.doors_time, e.start_time, e.end_time, e.event_url FROM events e JOIN venues v ON e.venue_id = v.id WHERE DATE(start_time) = CURRENT_DATE() OR DATE(doors_time) = CURRENT_DATE()";
 //        PreparedStatement stmt;
@@ -226,8 +248,8 @@ public class TestController {
 //                String venueName = rs.getString("venue_name");
 //
 //                String doorsTime = rs.getString("doors_time");
-//                String startTime = rs.getString("doors_time");
-//                String endTime = rs.getString("doors_time");
+//                String startTime = rs.getString("start_time");
+//                String endTime = rs.getString("end_time");
 //
 //                String eventUrl = rs.getString("event_url");
 //
@@ -250,23 +272,5 @@ public class TestController {
 //        }
 //        db.disconnect();
         return "Done (we shall not flood twitter)";
-    }
-
-    @RequestMapping("/venues")
-    public String getVenues() {
-        cxn = db.connect();
-        String sql = "SELECT * FROM venues";
-        String json = this.executeQueryAndPrintResult(sql);
-        db.disconnect();
-        return json;
-    }
-
-    @RequestMapping("/events")
-    public String getEvents() {
-        cxn = db.connect();
-        String sql = "SELECT events.id, events.name, venues.name FROM events INNER JOIN venues ON events.venue_id = venues.id";
-        String json = this.executeQueryAndPrintResult(sql);
-        db.disconnect();
-        return json;
     }
 }
