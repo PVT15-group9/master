@@ -1,5 +1,6 @@
 CREATE TABLE 'sensor'(
 	'sensor_id' BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	'event_venue_id' INT(10) UNSIGNED NOT NULL,
 	'creation_time' TIMESTAMP(0),
 	'event_start_time' TIMESTAMP(0),
 	'event_end_time' TIMESTAMP(0),
