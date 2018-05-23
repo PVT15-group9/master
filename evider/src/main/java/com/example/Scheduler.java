@@ -29,7 +29,7 @@ public class Scheduler {
     private TwitterHelper twitterHelper;
 
     //Runs at noon
-    @Scheduled(cron = "0 52 12 * * *") 
+    @Scheduled(cron = "0 20 12 * * *") 
     public void checkDbEvents() {
         LOGGER.info(this.tweetEvent());
     }
@@ -99,7 +99,7 @@ public class Scheduler {
 
                 String eventUrl = rs.getString("event_url");
 
-                output = "At " + venueName + " today: " + eventName + "\n. Doors open at " + doorsTime + ", and the events starts at: " + startTime;
+                output = "At " + venueName + " today: " + eventName + ". \n Doors open at " + doorsTime + ", \n The events starts at: " + startTime;
                 if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
@@ -130,7 +130,7 @@ public class Scheduler {
                 String endpoint = rs.getString("e_name");
                 String transportType = rs.getString("t_name");
 
-                output = " Get from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights - it's only " + distance + " meters!";
+                output = " Get from " + venue + " to " + endpoint + " (" + transportType + ") by following the " + color + " lights \n - it's only " + distance + " meters!";
                 if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
