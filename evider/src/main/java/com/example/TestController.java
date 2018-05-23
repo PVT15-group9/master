@@ -21,15 +21,15 @@ public class TestController {
 
     private MySQLConnect db = new MySQLConnect();
     private Connection cxn = null;
-    private static final String version = "/api/v1/";
+    private static final String API_VERSION = "/api/v1/";
 
     @Autowired
     private JWTDecoder jwtDecoder;
 
     //@Autowired
     //private TwitterConfig twitterConfig;
-    @Autowired
-    private TwitterHelper twitterHelper;
+    //@Autowired
+    //private TwitterHelper twitterHelper;
 
     // Base route
     @RequestMapping("/")
@@ -99,7 +99,7 @@ public class TestController {
      Production routes
      */
     @CrossOrigin
-    @RequestMapping(value = version + "venueHasEvent", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = API_VERSION + "venueHasEvent", method = RequestMethod.GET, produces = "application/json")
     public String venueHasEvent(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
         String token = jwtDecoder.validateHeader(authHeader);
         if (token == null) {
@@ -130,7 +130,7 @@ public class TestController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = version + "route", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = API_VERSION + "route", method = RequestMethod.GET, produces = "application/json")
     public String getRouteById(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
         String token = jwtDecoder.validateHeader(authHeader);
         if (token == null) {
@@ -162,7 +162,7 @@ public class TestController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = version + "routes", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = API_VERSION + "routes", method = RequestMethod.GET, produces = "application/json")
     public String getRoutesByVenue(@RequestHeader("Authorization") String authHeader, @RequestParam("user_value") int userValue) {
         String token = jwtDecoder.validateHeader(authHeader);
         if (token == null) {
@@ -194,7 +194,7 @@ public class TestController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = version + "venues", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = API_VERSION + "venues", method = RequestMethod.GET, produces = "application/json")
     public String getVenuesProd(@RequestHeader("Authorization") String authHeader) {
         String token = jwtDecoder.validateHeader(authHeader);
         if (token == null) {
@@ -224,53 +224,5 @@ public class TestController {
         String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
         return json;
-    }
-
-    /*
-        The routes below are test routes...
-     */
-    @RequestMapping("/eventToday")
-    public String eventToday() {
-        //TwitterHelper th = new TwitterHelper();
-        //Twitter twitter = new TwitterTemplate(twitterConfig.getConsumerKey(), twitterConfig.getConsumerSecret(), twitterConfig.getAccessToken(), twitterConfig.getAccessTokenSecret());
-
-//        cxn = db.connect();
-//        String sql = "SELECT v.name AS 'venue_name', e.name AS 'event_name', e.doors_time, e.start_time, e.end_time, e.event_url FROM events e JOIN venues v ON e.venue_id = v.id WHERE DATE(start_time) = CURRENT_DATE() OR DATE(doors_time) = CURRENT_DATE()";
-//        PreparedStatement stmt;
-//        ResultSet rs;
-//
-//        try {
-//            stmt = cxn.prepareStatement(sql);
-//            rs = stmt.executeQuery();
-//
-//            while (rs.next()) {
-//                String eventName = rs.getString("event_name");
-//                String venueName = rs.getString("venue_name");
-//
-//                String doorsTime = rs.getString("doors_time");
-//                String startTime = rs.getString("start_time");
-//                String endTime = rs.getString("end_time");
-//
-//                String eventUrl = rs.getString("event_url");
-//
-//                String output = "(TH) At " + venueName + " today: " + eventName + ". Doors at " + doorsTime + ", events starts at: " + startTime;
-//                if(!twitterHelper.makeTweet(output)) {
-//                    return "Error when making tweet!";
-//                }
-//                /*
-//                try {
-//                    twitter.timelineOperations().updateStatus(output);
-//                } catch (RuntimeException ex) {
-//                    // log the error
-//                    return "Could not tweet : " + ex.getMessage();
-//                }
-//                 */
-//            }
-//            stmt.close();
-//        } catch (SQLException e) {
-//            return "Error in SQL : " + e;
-//        }
-//        db.disconnect();
-        return "Done (we shall not flood twitter)";
     }
 }
