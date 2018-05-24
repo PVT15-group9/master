@@ -160,6 +160,7 @@ public class TestController {
                 + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) >  (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"YELLOW\") THEN \"RED\" "
                 + "WHEN 1=1 THEN \"GREEN\" "
                 + "END"
+                + ")"
                 + ") AS 'crowd_indicator', "
                 + "r.distance_in_meters, "
                 + "r.color, "
