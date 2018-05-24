@@ -142,14 +142,50 @@ public class TestController {
         }
 
         cxn = db.connect();
-        String sql = "SELECT  r.id AS 'route_id', r.endpoint_id , e.transport_type,  e.name AS 'e_name', t.name AS 't_name', r.venue_id,  e.SL_SITE_ID, t.img_url AS 'icon', (SELECT url FROM crowd_indicators ORDER BY RAND() LIMIT 1) AS 'crowd_indicator', r.distance_in_meters, r.color, r.color_hex, CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.id = ?  ORDER BY r.distance_in_meters ASC";
+        String sql = "SELECT "
+                + "r.id AS 'route_id', "
+                + "r.endpoint_id , "
+                + "e.transport_type,  "
+                + "e.name AS 'e_name', "
+                + "t.name AS 't_name', "
+                + "r.venue_id, "
+                + "e.SL_SITE_ID, "
+                + "t.img_url AS 'icon', "
+                + "("
+                    + "SELECT url FROM crowd_indicators WHERE name = "
+                        + "("
+                            + "CASE "
+                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"GREEN\") THEN \"GREEN\" "
+                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"YELLOW\") THEN \"YELLOW\" "
+                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) >  (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"YELLOW\") THEN \"RED\" "
+                                + "WHEN 1=1 THEN \"GREEN\" "
+                            + "END"
+                        + ") AS 'crowd_indicator', "
+                + "r.distance_in_meters, "
+                + "r.color, "
+                + "r.color_hex, "
+                + "CONCAT(ROUND(((r.distance_in_meters / 1000) / 5) * 60), \" min\") AS 'time' "
+                + "FROM routes r "
+                + "JOIN venues v ON r.venue_id = v.id "
+                + "JOIN endpoints e ON r.endpoint_id = e.id "
+                + "JOIN transport_types t ON e.transport_type = t.id "
+                + "WHERE r.id = ? "
+                + "ORDER BY r.distance_in_meters ASC";
 
         PreparedStatement stmt;
         ResultSet rs;
 
         try {
             stmt = cxn.prepareStatement(sql);
-            stmt.setInt(1, userValue);
+            // we need to set the route id seven times
+            int i = 1;
+            stmt.setInt(i++, userValue);
+            stmt.setInt(i++, userValue);
+            stmt.setInt(i++, userValue);
+            stmt.setInt(i++, userValue);
+            stmt.setInt(i++, userValue);
+            stmt.setInt(i++, userValue);
+            stmt.setInt(i++, userValue);
             rs = stmt.executeQuery();
         } catch (SQLException e) {
             return "{\"error\" : \"error in sql\"}";
