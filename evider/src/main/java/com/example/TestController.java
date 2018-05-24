@@ -30,7 +30,6 @@ public class TestController {
     //private TwitterConfig twitterConfig;
     //@Autowired
     //private TwitterHelper twitterHelper;
-
     // Base route
     @RequestMapping("/")
     public String troll() {

@@ -8,86 +8,89 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
+
 /**
- * En register klass som registrerar ett simulerad värde för varje route med extra information.
- * 
+ * En register klass som registrerar ett simulerad värde för varje route med
+ * extra information.
+ *
  * @author Dmitri
  *
  */
 @Entity
 @DynamicUpdate
-@Table(name="route_value_register")
+@Table(name = "route_value_register")
 public class RouteValueRegister {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="register_id")
-	private long registerId;
-	
-	@Column(name="route_id")
-	private long routeId;
-	
-	@Column(name="sensor_id")
-	private long sensorId;
-	
-	@Column(name="sensor_value")
-	private int sensorValue;
-	
-	@Column(name="time_stamp")
-	private LocalDateTime timeStamp;
-	
-	public RouteValueRegister(){}
-	
-	public RouteValueRegister(long routeId, long sensorId, int sensorValue, LocalDateTime timeStamp) {
-		this.routeId = routeId;
-		this.sensorId = sensorId;
-		this.sensorValue = sensorValue;
-		this.timeStamp = timeStamp;
-	}
 
-	public long getSensorRegisterId() {
-		return registerId;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "register_id")
+    private long registerId;
 
-	public void setSensorRegisterId(long registerId) {
-		this.registerId = registerId;
-	}
+    @Column(name = "route_id")
+    private long routeId;
 
-	public long getRouteId() {
-		return routeId;
-	}
+    @Column(name = "sensor_id")
+    private long sensorId;
 
-	public void setRouteId(long routeId) {
-		this.routeId = routeId;
-	}
+    @Column(name = "sensor_value")
+    private int sensorValue;
 
-	public long getSensorId() {
-		return sensorId;
-	}
+    @Column(name = "time_stamp")
+    private LocalDateTime timeStamp;
 
-	public void setSensorId(long sensorId) {
-		this.sensorId = sensorId;
-	}
+    public RouteValueRegister() {
+    }
 
-	public int getSensorValue() {
-		return sensorValue;
-	}
+    public RouteValueRegister(long routeId, long sensorId, int sensorValue, LocalDateTime timeStamp) {
+        this.routeId = routeId;
+        this.sensorId = sensorId;
+        this.sensorValue = sensorValue;
+        this.timeStamp = timeStamp;
+    }
 
-	public void setSensorValue(int sensorValue) {
-		this.sensorValue = sensorValue;
-	}
+    public long getSensorRegisterId() {
+        return registerId;
+    }
 
-	public LocalDateTime getTimeStamp() {
-		return timeStamp;
-	}
+    public void setSensorRegisterId(long registerId) {
+        this.registerId = registerId;
+    }
 
-	public void setTimeStamp(LocalDateTime timeStamp) {
-		this.timeStamp = timeStamp;
-	}
+    public long getRouteId() {
+        return routeId;
+    }
 
-	@Override
-	public String toString() {
-		return "RouteValueRegister [registerId=" + registerId + ", routeId=" + routeId + ", sensorId=" + sensorId
-				+ ", sensorValue=" + sensorValue + ", timeStamp=" + timeStamp + "]";
-	}
+    public void setRouteId(long routeId) {
+        this.routeId = routeId;
+    }
+
+    public long getSensorId() {
+        return sensorId;
+    }
+
+    public void setSensorId(long sensorId) {
+        this.sensorId = sensorId;
+    }
+
+    public int getSensorValue() {
+        return sensorValue;
+    }
+
+    public void setSensorValue(int sensorValue) {
+        this.sensorValue = sensorValue;
+    }
+
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    @Override
+    public String toString() {
+        return "RouteValueRegister [registerId=" + registerId + ", routeId=" + routeId + ", sensorId=" + sensorId
+                + ", sensorValue=" + sensorValue + ", timeStamp=" + timeStamp + "]";
+    }
 }

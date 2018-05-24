@@ -98,8 +98,7 @@ public class Sensor {
      */
     private static final int SENSOR_START_VALUE = 30;
     /**
-     * hur många minuter som ska vridas framåt för att bestämma sensorns
-     * sluttid
+     * hur många minuter som ska vridas framåt för att bestämma sensorns sluttid
      */
     private static final int SENSOR_END_VALUE = 90;
 
@@ -107,9 +106,9 @@ public class Sensor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sensor_id")
     private long id;
-    
+
     @Column(name = "event_venue_id")
-	private int eventVenueId;
+    private int eventVenueId;
 
     @Column(name = "creation_time")
     private LocalDateTime sensorCreationTime;
@@ -125,21 +124,21 @@ public class Sensor {
 
     @Column(name = "sensor_value")
     private int sensorValue;
-    
+
     @Fetch(FetchMode.SELECT)
     @OneToMany(mappedBy = "sensor", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SimulatedValue> values = new ArrayList<>();
-    
+
     @Fetch(FetchMode.SELECT)
-	@ElementCollection(fetch=FetchType.EAGER)
-	private List<Integer> routes = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Integer> routes = new ArrayList<>();
 
     public Sensor() {
     }
 
     public Sensor(int eventVenueId, LocalDateTime sensorCreationTime, LocalDateTime eventStartTime, LocalDateTime eventEndTime, LocalDateTime doorOpenTime, int sensorValue) {
-    	this.eventVenueId = eventVenueId;
-    	this.sensorCreationTime = sensorCreationTime;
+        this.eventVenueId = eventVenueId;
+        this.sensorCreationTime = sensorCreationTime;
         this.eventStartTime = eventStartTime;
         this.eventEndTime = eventEndTime;
         this.doorOpenTime = doorOpenTime;
@@ -156,14 +155,14 @@ public class Sensor {
     public void setId(long id) {
         this.id = id;
     }
-    
-    public int getEventVenueId() {
-		return eventVenueId;
-	}
 
-	public void setEventVenueId(int eventVenueId) {
-		this.eventVenueId = eventVenueId;
-	}
+    public int getEventVenueId() {
+        return eventVenueId;
+    }
+
+    public void setEventVenueId(int eventVenueId) {
+        this.eventVenueId = eventVenueId;
+    }
 
     public LocalDateTime getSensorCreationTime() {
         return sensorCreationTime;
@@ -188,14 +187,14 @@ public class Sensor {
     public void setValues(List<SimulatedValue> values) {
         this.values = values;
     }
-    
-    public List<Integer> getRoutes() {
-		return routes;
-	}
 
-	public void setRoutes(List<Integer> routes) {
-		this.routes = routes;
-	}
+    public List<Integer> getRoutes() {
+        return routes;
+    }
+
+    public void setRoutes(List<Integer> routes) {
+        this.routes = routes;
+    }
 
     public LocalDateTime getEventStartTime() {
         return eventStartTime;
@@ -481,56 +480,68 @@ public class Sensor {
                 + ", eventEndTime=" + eventEndTime + ", doorOpenTime=" + doorOpenTime + ", sensorValue=" + sensorValue
                 + ", values size=" + values.size() + "]";
     }
-    
+
     /**
      * auto simulerad hashCode metod
      */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((doorOpenTime == null) ? 0 : doorOpenTime.hashCode());
-		result = prime * result + ((eventEndTime == null) ? 0 : eventEndTime.hashCode());
-		result = prime * result + ((eventStartTime == null) ? 0 : eventStartTime.hashCode());
-		result = prime * result + eventVenueId;
-		result = prime * result + ((sensorCreationTime == null) ? 0 : sensorCreationTime.hashCode());
-		return result;
-	}
-	
-	 /**
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((doorOpenTime == null) ? 0 : doorOpenTime.hashCode());
+        result = prime * result + ((eventEndTime == null) ? 0 : eventEndTime.hashCode());
+        result = prime * result + ((eventStartTime == null) ? 0 : eventStartTime.hashCode());
+        result = prime * result + eventVenueId;
+        result = prime * result + ((sensorCreationTime == null) ? 0 : sensorCreationTime.hashCode());
+        return result;
+    }
+
+    /**
      * auto simulerad equals metod
      */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Sensor other = (Sensor) obj;
-		if (doorOpenTime == null) {
-			if (other.doorOpenTime != null)
-				return false;
-		} else if (!doorOpenTime.equals(other.doorOpenTime))
-			return false;
-		if (eventEndTime == null) {
-			if (other.eventEndTime != null)
-				return false;
-		} else if (!eventEndTime.equals(other.eventEndTime))
-			return false;
-		if (eventStartTime == null) {
-			if (other.eventStartTime != null)
-				return false;
-		} else if (!eventStartTime.equals(other.eventStartTime))
-			return false;
-		if (eventVenueId != other.eventVenueId)
-			return false;
-		if (sensorCreationTime == null) {
-			if (other.sensorCreationTime != null)
-				return false;
-		} else if (!sensorCreationTime.equals(other.sensorCreationTime))
-			return false;
-		return true;
-	}  
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Sensor other = (Sensor) obj;
+        if (doorOpenTime == null) {
+            if (other.doorOpenTime != null) {
+                return false;
+            }
+        } else if (!doorOpenTime.equals(other.doorOpenTime)) {
+            return false;
+        }
+        if (eventEndTime == null) {
+            if (other.eventEndTime != null) {
+                return false;
+            }
+        } else if (!eventEndTime.equals(other.eventEndTime)) {
+            return false;
+        }
+        if (eventStartTime == null) {
+            if (other.eventStartTime != null) {
+                return false;
+            }
+        } else if (!eventStartTime.equals(other.eventStartTime)) {
+            return false;
+        }
+        if (eventVenueId != other.eventVenueId) {
+            return false;
+        }
+        if (sensorCreationTime == null) {
+            if (other.sensorCreationTime != null) {
+                return false;
+            }
+        } else if (!sensorCreationTime.equals(other.sensorCreationTime)) {
+            return false;
+        }
+        return true;
+    }
 }
