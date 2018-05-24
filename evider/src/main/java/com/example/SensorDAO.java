@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 import com.example.dto.EventDTO;
 import com.example.dto.RouteDTO;
 import com.example.dto.ThresholdDTO;
+import com.example.model.RouteValueRegister;
 import com.example.model.Sensor;
+import com.example.model.SimulatedValue;
+
 import javax.transaction.Transactional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -48,9 +51,8 @@ public class SensorDAO {
      * @param id
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public List<Sensor> findById(long id) {
-        return getSession().createQuery("SELECT s FROM Sensor s WHERE s.id = :id").setParameter("id", id).list();
+    public Sensor findById(long id) {
+        return getSession().byId(Sensor.class).load(id);
     }
 
     /**
@@ -76,6 +78,23 @@ public class SensorDAO {
         return true;
     }
     /**
+     * Sparar ett nytt registrerat värde för sensorn.
+     * @param newValue
+     * @return
+     */
+    public boolean registerValue(RouteValueRegister newValue) {
+		getSession().save(newValue);
+		return true;
+	}
+	/**
+	 * Hämtar alla registrerade värdena från db.
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<RouteValueRegister> getRegister(){
+		return getSession().createQuery("FROM RouteValueRegister").list();
+	}
+    /**
      * Hämtar alla events från databasen.
      * @return
      */
@@ -84,8 +103,8 @@ public class SensorDAO {
 	public List<EventDTO> findAllEvent(){
 		return getSession()
 				.createNativeQuery("SELECT event.id as \"eventId\", event.user_id as \"userId\", event.venue_id as \"venueId\", " + 
-											"event.name as \"eventname\", event.start_time as \"eventStartTime\", event.end_time as \"eventEndTime\", " + 
-											"event.doors_time as \"eventDoorOpenTime\", event.event_url as \"url\" " +
+									"event.name as \"eventname\", event.start_time as \"eventStartTime\", event.end_time as \"eventEndTime\", " + 
+									"event.doors_time as \"eventDoorOpenTime\", event.event_url as \"url\" " +
 								   "FROM events event")
 				.setResultTransformer(Transformers.aliasToBean(EventDTO.class))
 				.list();
@@ -99,11 +118,11 @@ public class SensorDAO {
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	public List<RouteDTO> findAllRoute(){
 		return getSession().createNativeQuery("SELECT route.id as \"routeId\", route.venue_id as \"venueId\", " + 
-														"route.endpoint_id as \"endpointId\", route.color as \"color\", route.color_hex as \"colorHex\", " + 
-														"route.distance_in_meters as \"distanceInMeter\", route.x_faktor as \"xFaktor\" " +
+												"route.endpoint_id as \"endpointId\", route.color as \"color\", route.color_hex as \"colorHex\", " + 
+												"route.distance_in_meters as \"distanceInMeter\", route.x_faktor as \"xFaktor\" " +
 											  "FROM routes route")
-						   .setResultTransformer(Transformers.aliasToBean(RouteDTO.class))
-						   .list();
+				.setResultTransformer(Transformers.aliasToBean(RouteDTO.class))
+				.list();
 	}
 	
 	/**
@@ -189,15 +208,14 @@ public class SensorDAO {
 		return true;
 	}
     
-    /**
-     * Tar bort ett simulerad värde med det angivna id:et.
-     *
-     * @param id
-     * @return
-     */
+	/**
+	 * Tar bort ett simulerad värde.
+	 * @param oldValue
+	 * @return
+	 */
 	
-    public boolean deleteSimulatedValue(long id) {
-        getSession().createQuery("DELETE FROM SimulatedValue WHERE id = :id").setParameter("id", id).executeUpdate();
+    public boolean deleteSimulatedValue(SimulatedValue oldValue) {
+        getSession().delete(oldValue);
         return true;
     }
 
