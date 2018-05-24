@@ -40,7 +40,7 @@ public class Scheduler {
         LOGGER.info(this.tweetLights());
     }
 
-    @Scheduled(cron = "0 * * * * *")
+   /* @Scheduled(cron = "0 * * * * *")
     public void checkDbSensor() {
         LOGGER.info(this.tweetSensorValue());
     }
@@ -77,7 +77,7 @@ public class Scheduler {
         }
         db.disconnect();
         return "Done";
-    }
+    }*/
 
     public String tweetEvent() {
         cxn = db.connect();
@@ -95,11 +95,15 @@ public class Scheduler {
 
                 String doorsTime = rs.getString("doors_time");
                 String startTime = rs.getString("start_time");
-                String endTime = rs.getString("end_time");
+                String eventUrl = rs.getString("event_url");String [] d = doorsTime.split(":");
+                        String d1 = d[0];
+                        String d2 = d[1];
+                String [] s = startTime.split(":");
+                        String s1 = s[0];
+                        String s2 = s[1];
+                    
 
-                String eventUrl = rs.getString("event_url");
-
-                output = "At " + venueName + " today: " + eventName + ". \n Doors open at " + doorsTime + ", \n The events starts at: " + startTime;
+                output = "At " + venueName + " today: " + eventName + "\n. Doors open at " + d1+d2 + ", and the events starts at: " + startTime;
                 if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
