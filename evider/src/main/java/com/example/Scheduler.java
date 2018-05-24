@@ -109,7 +109,7 @@ public class Scheduler {
                         String ss1 = ss[0];
                         String ss2 = ss[1];
 
-                output = "At " + venueName + " today: " + eventName + ".\nDoors open at " + ds1+ ":" +ds2 + " and the events starts at: " + ss1 + ":"+ ss2;
+                output = "At " + venueName + " today: " + eventName + ".\nDoors open at " + ds1+ ":" +ds2 + " and the events starts at " + ss1 + ":"+ ss2;
                 if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
