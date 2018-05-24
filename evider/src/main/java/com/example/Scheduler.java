@@ -80,7 +80,7 @@ public class Scheduler {
     }*/
 
     public String tweetEvent() {
-        cxn = db.connect();
+        cxn = db.connect(); 
         String sql = "SELECT v.name AS 'venue_name', e.name AS 'event_name', e.doors_time, e.start_time, e.end_time, e.event_url FROM events e JOIN venues v ON e.venue_id = v.id WHERE DATE(start_time) = CURRENT_DATE() OR DATE(doors_time) = CURRENT_DATE()";
         PreparedStatement stmt;
         ResultSet rs;
@@ -109,7 +109,7 @@ public class Scheduler {
                         String ss1 = ss[0];
                         String ss2 = ss[1];
 
-                output = "At " + venueName + " today: " + eventName + "\n. Doors open at " + ds1+ ":" +ds2 + ", and the events starts at: " + ss1 + ":"+ ss2;
+                output = "At " + venueName + " today: " + eventName + ".\nDoors open at " + ds1+ ":" +ds2 + ", and the events starts at: " + ss1 + ":"+ ss2;
                 if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
