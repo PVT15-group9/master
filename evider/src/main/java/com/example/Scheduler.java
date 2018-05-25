@@ -21,9 +21,6 @@ public class Scheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(Scheduler.class);
 
     @Autowired
-    private TwitterConfig twitterConfig;
-
-    @Autowired
     private TwitterHelper twitterHelper;
 
     //Runs at noon

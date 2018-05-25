@@ -27,10 +27,9 @@ public class TestController {
     @Autowired
     private JWTDecoder jwtDecoder;
 
-    //@Autowired
-    //private TwitterConfig twitterConfig;
-    //@Autowired
-    //private TwitterHelper twitterHelper;
+    @Autowired
+    private TwitterHelper twitterHelper;
+
     // Base route
     @RequestMapping("/")
     public String troll() {
@@ -273,4 +272,58 @@ public class TestController {
         return json;
     }
     // END production routes
+
+    @RequestMapping("/tweetSensor")
+    public String tweetSensor() {
+        cxn = db.connect();
+        String sql = "SELECT * FROM routes WHERE latestTweet < (NOW() - INTERVAL 30 MINUTE) OR latestTweet IS NULL ";
+        PreparedStatement stmt;
+        ResultSet rs;
+
+        try {
+            stmt = cxn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+
+                String sql2 = "SELECT v.name AS 'v_name', e.name AS 'e_name', t.name AS 't_name', ( SELECT ( CASE WHEN (SELECT value FROM faux_sensor_values WHERE route_id = ? ORDER BY timestamp DESC LIMIT 1) > (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"YELLOW\") THEN \"RED\" WHEN 1=1 THEN \"GREEN\" END ) ) AS 'crowd_indicator'  FROM routes r  JOIN venues v ON r.venue_id = v.id JOIN endpoints e ON r.endpoint_id = e.id JOIN transport_types t ON e.transport_type = t.id WHERE r.id = ?";
+                PreparedStatement stmt2;
+                ResultSet rs2;
+                stmt2 = cxn.prepareStatement(sql2);
+                stmt2.setInt(1, id);
+                stmt2.setInt(2, id);
+                stmt2.setInt(3, id);
+
+                rs2 = stmt2.executeQuery();
+
+                while (rs2.next()) {
+                    String ci = rs2.getString("crowd_indicator");
+                    if (ci.equals("RED")) {
+
+                        String vName = rs.getString("v_name");
+                        String eName = rs.getString("e_name");
+                        String tName = rs.getString("t_name");
+
+                        String output = "Now there are many people walking between " + vName + " and " + eName + " " + tName + "station";
+                        if (!twitterHelper.makeTweet(output)) {
+                            return "Error when making tweet!";
+                        }
+                        PreparedStatement stmt3;
+                        String update = "UPDATE routes SET latestTweet = NOW() WHERE id = ?";
+                        stmt3 = cxn.prepareStatement(update);
+                        stmt3.setInt(1, id);
+                        int rows = stmt3.executeUpdate();
+                    }
+
+                }
+            }
+
+            stmt.close();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
+        db.disconnect();
+        return "Done";
+    }
 }
