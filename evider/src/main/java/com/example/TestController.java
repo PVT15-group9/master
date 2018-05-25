@@ -152,16 +152,16 @@ public class TestController {
                 + "r.venue_id, "
                 + "e.SL_SITE_ID, "
                 + "t.img_url AS 'icon', "
-                    + "("
-                        + "SELECT url FROM crowd_indicators WHERE name = ("
-                            + "CASE "
-                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"GREEN\") THEN \"GREEN\" "
-                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"YELLOW\") THEN \"YELLOW\" "
-                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) >  (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"YELLOW\") THEN \"RED\" "
-                                + "WHEN 1=1 THEN \"GREEN\" "
-                            + "END"
-                        + ")"
-                    + ") AS 'crowd_indicator', "
+                + "("
+                + "SELECT url FROM crowd_indicators WHERE name = ("
+                + "CASE "
+                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"GREEN\") THEN \"GREEN\" "
+                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"YELLOW\") THEN \"YELLOW\" "
+                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = ? ORDER BY time_stamp DESC LIMIT 1) >  (SELECT amount FROM thresholds WHERE route_id = ? AND type = \"YELLOW\") THEN \"RED\" "
+                + "WHEN 1=1 THEN \"GREEN\" "
+                + "END"
+                + ")"
+                + ") AS 'crowd_indicator', "
                 + "r.distance_in_meters, "
                 + "r.color, "
                 + "r.color_hex, "
@@ -179,7 +179,7 @@ public class TestController {
         try {
             stmt = cxn.prepareStatement(sql);
             // we need to set the route id seven times
-            for(int i = 1; i<=7; i++) {
+            for (int i = 1; i <= 7; i++) {
                 stmt.setInt(i, userValue);
             }
             rs = stmt.executeQuery();
@@ -216,16 +216,16 @@ public class TestController {
                 + "r.venue_id, "
                 + "e.SL_SITE_ID, "
                 + "t.img_url AS 'icon', "
-                    + "("
-                        + "SELECT url FROM crowd_indicators WHERE name = ("
-                            + "CASE "
-                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = r.id ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = r.id AND type = \"GREEN\") THEN \"GREEN\" "
-                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = r.id ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = r.id AND type = \"YELLOW\") THEN \"YELLOW\" "
-                                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = r.id ORDER BY time_stamp DESC LIMIT 1) >  (SELECT amount FROM thresholds WHERE route_id = r.id AND type = \"YELLOW\") THEN \"RED\" "
-                                + "WHEN 1=1 THEN \"GREEN\" "
-                            + "END"
-                        + ")"
-                    + ") AS 'crowd_indicator', "
+                + "("
+                + "SELECT url FROM crowd_indicators WHERE name = ("
+                + "CASE "
+                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = r.id ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = r.id AND type = \"GREEN\") THEN \"GREEN\" "
+                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = r.id ORDER BY time_stamp DESC LIMIT 1) <= (SELECT amount FROM thresholds WHERE route_id = r.id AND type = \"YELLOW\") THEN \"YELLOW\" "
+                + "WHEN (SELECT sensor_value FROM route_value_register WHERE route_id = r.id ORDER BY time_stamp DESC LIMIT 1) >  (SELECT amount FROM thresholds WHERE route_id = r.id AND type = \"YELLOW\") THEN \"RED\" "
+                + "WHEN 1=1 THEN \"GREEN\" "
+                + "END"
+                + ")"
+                + ") AS 'crowd_indicator', "
                 + "r.distance_in_meters, "
                 + "r.color, "
                 + "r.color_hex, "
@@ -236,7 +236,7 @@ public class TestController {
                 + "JOIN transport_types t ON e.transport_type = t.id "
                 + "WHERE r.venue_id = ? "
                 + "ORDER BY r.distance_in_meters ASC";
-        
+
         PreparedStatement stmt;
         ResultSet rs;
 
@@ -273,50 +273,4 @@ public class TestController {
         return json;
     }
     // END production routes
-
-    /*
-        Test route for sensors
-     */
-    @RequestMapping("/sensors")
-    public String getSensors() {
-        cxn = db.connect();
-        String sql = "SELECT * FROM sensor";
-        String json = this.executeQueryAndPrintResult(sql);
-        db.disconnect();
-        return json;
-    }
-    
-    @RequestMapping("/fauxSensor")
-    public String makeFauxSensorValues() {
-        cxn = db.connect();
-        ArrayList<Integer> ids = new ArrayList<>();
-        String sql = "SELECT id FROM routes";
-        PreparedStatement stmt;
-        ResultSet rs;
-        try {
-            stmt = cxn.prepareStatement(sql);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                ids.add(rs.getInt("id"));
-            }
-            stmt.close();
-        } catch (SQLException e) {
-            return "Error in SQL : " + e;
-        }
-
-        for (Integer id : ids) {
-            String insert = "INSERT INTO faux_sensor_values (route_id, value) VALUES (?, (SELECT ( ROUND(((RAND() * (2-0.2))+0.2) * AVG(amount)) ) AS 'value' FROM thresholds WHERE route_id = ? GROUP BY route_id));";
-            try {
-                stmt = cxn.prepareStatement(insert);
-                stmt.setInt(1, id);
-                stmt.setInt(2, id);
-                int insertedRows = stmt.executeUpdate();
-            } catch (SQLException e) {
-                return "Error in SQL : " + e;
-            }
-        }
-
-        db.disconnect();
-        return "Done";
-    }
 }
