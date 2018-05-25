@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.*;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
@@ -283,5 +284,38 @@ public class TestController {
         String json = this.executeQueryAndPrintResult(sql);
         db.disconnect();
         return json;
+    }
+    
+    @RequestMapping("/fauxSensor")
+    public String makeFauxSensorValues() {
+        cxn = db.connect();
+        ArrayList<Integer> ids = new ArrayList<>();
+        String sql = "SELECT id FROM routes";
+        PreparedStatement stmt;
+        ResultSet rs;
+        try {
+            stmt = cxn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
+
+        for (Integer id : ids) {
+            String insert = "INSERT INTO faux_sensor_values (route_id, value) VALUES (?, (SELECT ( ROUND(((RAND() * (2-0.2))+0.2) * AVG(amount)) ) AS 'value' FROM thresholds WHERE route_id = ? GROUP BY route_id));";
+            try {
+                stmt = cxn.prepareStatement(insert);
+                stmt.setInt(1, id);
+                int insertedRows = stmt.executeUpdate();
+            } catch (SQLException e) {
+                return "Error in SQL : " + e;
+            }
+        }
+
+        db.disconnect();
+        return "Done";
     }
 }
