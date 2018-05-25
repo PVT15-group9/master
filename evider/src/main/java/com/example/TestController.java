@@ -315,7 +315,6 @@ public class TestController {
                         stmt3.setInt(1, id);
                         int rows = stmt3.executeUpdate();
                     }
-
                 }
             }
 
