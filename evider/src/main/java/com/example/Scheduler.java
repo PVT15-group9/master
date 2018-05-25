@@ -4,13 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.social.twitter.api.Twitter;
-import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,7 +27,7 @@ public class Scheduler {
     private TwitterHelper twitterHelper;
 
     //Runs at noon
-    @Scheduled(cron = "0 35 12 * * *") 
+    @Scheduled(cron = "0 35 12 * * *")
     public void checkDbEvents() {
         LOGGER.info(this.tweetEvent());
     }
@@ -40,7 +38,19 @@ public class Scheduler {
         LOGGER.info(this.tweetLights());
     }
 
-   /* @Scheduled(cron = "0 * * * * *")
+    // Runs every minute
+    @Scheduled(cron = "0 * * * * *")
+    public void addFauxSensorValues() {
+        LOGGER.info(this.makeFauxSensorValues());
+    }
+
+    // Runs every hour
+    @Scheduled(cron = "0 0 * * * *")
+    public void removeFauxSensorValues() {
+        LOGGER.info(this.clearFauxSensorValues());
+    }
+
+    /* @Scheduled(cron = "0 * * * * *")
     public void checkDbSensor() {
         LOGGER.info(this.tweetSensorValue());
     }
@@ -78,6 +88,52 @@ public class Scheduler {
         db.disconnect();
         return "Done";
     }*/
+    public String makeFauxSensorValues() {
+        cxn = db.connect();
+        ArrayList<Integer> ids = new ArrayList<>();
+        String sql = "SELECT id FROM routes";
+        PreparedStatement stmt;
+        ResultSet rs;
+        try {
+            stmt = cxn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
+
+        for (Integer id : ids) {
+            String insert = "INSERT INTO faux_sensor_values (route_id, value) VALUES (?, (SELECT ( ROUND(((RAND() * (2-0.2))+0.2) * AVG(amount)) ) AS 'value' FROM thresholds WHERE route_id = ? GROUP BY route_id));";
+            try {
+                stmt = cxn.prepareStatement(insert);
+                stmt.setInt(1, id);
+                stmt.setInt(2, id);
+                int insertedRows = stmt.executeUpdate();
+            } catch (SQLException e) {
+                return "Error in SQL : " + e;
+            }
+        }
+
+        db.disconnect();
+        return "Done";
+    }
+
+    public String clearFauxSensorValues() {
+        cxn = db.connect();
+        String sql = "DELETE FROM faux_sensor_values WHERE timestamp < (NOW() - INTERVAL 1 HOUR)";
+        PreparedStatement stmt;
+        try {
+            stmt = cxn.prepareStatement(sql);
+            int insertedRows = stmt.executeUpdate();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
+        db.disconnect();
+        return "Done";
+    }
 
     public String tweetEvent() {
         cxn = db.connect();
@@ -96,20 +152,20 @@ public class Scheduler {
                 String doorsTime = rs.getString("doors_time");
                 String startTime = rs.getString("start_time");
                 String eventUrl = rs.getString("event_url");
-                
-                String [] d = doorsTime.split(" ");
-                        String d1 = d[1];
-                String [] ds = d1.split(":");
-                        String ds1 = ds[0];
-                        String ds2 = ds[1];
-                        
-                String [] s = startTime.split(" ");
-                        String s1 = s[1];
-                String [] ss = s1.split(":");
-                        String ss1 = ss[0];
-                        String ss2 = ss[1];
 
-                output = "At " + venueName + " today: " + eventName + "\n. Doors open at " + ds1+ ":" +ds2 + ", and the events starts at: " + ss1 + ":"+ ss2;
+                String[] d = doorsTime.split(" ");
+                String d1 = d[1];
+                String[] ds = d1.split(":");
+                String ds1 = ds[0];
+                String ds2 = ds[1];
+
+                String[] s = startTime.split(" ");
+                String s1 = s[1];
+                String[] ss = s1.split(":");
+                String ss1 = ss[0];
+                String ss2 = ss[1];
+
+                output = "At " + venueName + " today: " + eventName + ".\nDoors open at " + ds1 + ":" + ds2 + " and the events starts at " + ss1 + ":" + ss2;
                 if (!twitterHelper.makeTweet(output)) {
                     return "Error when making tweet!";
                 }
