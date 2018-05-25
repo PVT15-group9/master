@@ -110,6 +110,7 @@ public class Scheduler {
             try {
                 stmt = cxn.prepareStatement(insert);
                 stmt.setInt(1, id);
+                stmt.setInt(2, id);
                 int insertedRows = stmt.executeUpdate();
             } catch (SQLException e) {
                 return "Error in SQL : " + e;
