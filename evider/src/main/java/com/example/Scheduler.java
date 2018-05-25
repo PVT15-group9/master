@@ -4,13 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.social.twitter.api.Twitter;
-import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -38,6 +36,18 @@ public class Scheduler {
     @Scheduled(cron = "0 0 */3 * * *")
     public void checkDbLights() {
         LOGGER.info(this.tweetLights());
+    }
+
+    // Runs every minute
+    @Scheduled(cron = "0 * * * * *")
+    public void addFauxSensorValues() {
+        LOGGER.info(this.makeFauxSensorValues());
+    }
+
+    // Runs every hour
+    @Scheduled(cron = "0 0 * * * *")
+    public void removeFauxSensorValues() {
+        LOGGER.info(this.clearFauxSensorValues());
     }
 
     /* @Scheduled(cron = "0 * * * * *")
@@ -78,6 +88,52 @@ public class Scheduler {
         db.disconnect();
         return "Done";
     }*/
+    public String makeFauxSensorValues() {
+        cxn = db.connect();
+        ArrayList<Integer> ids = new ArrayList<>();
+        String sql = "SELECT id FROM routes";
+        PreparedStatement stmt;
+        ResultSet rs;
+        try {
+            stmt = cxn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
+
+        for (Integer id : ids) {
+            String insert = "INSERT INTO faux_sensor_values (route_id, value) VALUES (?, (SELECT ( ROUND(((RAND() * (2-0.2))+0.2) * AVG(amount)) ) AS 'value' FROM thresholds WHERE route_id = ? GROUP BY route_id));";
+            try {
+                stmt = cxn.prepareStatement(insert);
+                stmt.setInt(1, id);
+                int insertedRows = stmt.executeUpdate();
+            } catch (SQLException e) {
+                return "Error in SQL : " + e;
+            }
+        }
+
+        db.disconnect();
+        return "Done";
+    }
+
+    public String clearFauxSensorValues() {
+        cxn = db.connect();
+        String sql = "DELETE FROM faux_sensor_values WHERE timestamp < (NOW() - INTERVAL 1 HOUR)";
+        PreparedStatement stmt;
+        try {
+            stmt = cxn.prepareStatement(sql);
+            int insertedRows = stmt.executeUpdate();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
+        db.disconnect();
+        return "Done";
+    }
+
     public String tweetEvent() {
         cxn = db.connect();
         String sql = "SELECT v.name AS 'venue_name', e.name AS 'event_name', e.doors_time, e.start_time, e.end_time, e.event_url FROM events e JOIN venues v ON e.venue_id = v.id WHERE DATE(start_time) = CURRENT_DATE() OR DATE(doors_time) = CURRENT_DATE()";
