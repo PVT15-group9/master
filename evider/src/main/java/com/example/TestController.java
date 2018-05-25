@@ -301,9 +301,9 @@ public class TestController {
                     String ci = rs2.getString("crowd_indicator");
                     if (ci.equals("RED")) {
 
-                        String vName = rs.getString("v_name");
-                        String eName = rs.getString("e_name");
-                        String tName = rs.getString("t_name");
+                        String vName = rs2.getString("v_name");
+                        String eName = rs2.getString("e_name");
+                        String tName = rs2.getString("t_name");
 
                         String output = "Now there are many people walking between " + vName + " and " + eName + " " + tName + "station";
                         if (!twitterHelper.makeTweet(output)) {
