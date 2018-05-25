@@ -39,13 +39,13 @@ public class Scheduler {
     }
 
     // Runs every minute
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "*/10 * * * * *")
     public void addFauxSensorValues() {
         LOGGER.info(this.makeFauxSensorValues());
     }
 
     // Runs every hour
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void removeFauxSensorValues() {
         LOGGER.info(this.clearFauxSensorValues());
     }
@@ -123,7 +123,7 @@ public class Scheduler {
 
     public String clearFauxSensorValues() {
         cxn = db.connect();
-        String sql = "DELETE FROM faux_sensor_values WHERE timestamp < (NOW() - INTERVAL 1 HOUR)";
+        String sql = "DELETE FROM faux_sensor_values WHERE timestamp < (NOW() - INTERVAL 1 MINUTE)";
         PreparedStatement stmt;
         try {
             stmt = cxn.prepareStatement(sql);
