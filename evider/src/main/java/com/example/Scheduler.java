@@ -46,6 +46,12 @@ public class Scheduler {
     public void removeFauxSensorValues() {
         LOGGER.info(this.clearFauxSensorValues());
     }
+    
+    // Should run every four hours
+    @Scheduled(cron = "0 0 */4 * * *")
+    public void removeRealSensorValues() {
+        LOGGER.info(this.clearRealSensorValues());
+    }
 
     @Scheduled(cron = "0 */5 * * * *")
     public void checkDbSensor() {
@@ -55,7 +61,7 @@ public class Scheduler {
 
     public String tweetSensor() {
         cxn = db.connect();
-        String sql = "SELECT * FROM routes WHERE latestTweet < (NOW() - INTERVAL 30 MINUTE) OR latestTweet IS NULL ";
+        String sql = "SELECT * FROM routes WHERE latestTweet < (NOW() - INTERVAL 2 HOUR) OR latestTweet IS NULL ";
         PreparedStatement stmt;
         ResultSet rs;
 
@@ -135,6 +141,20 @@ public class Scheduler {
             }
         }
 
+        db.disconnect();
+        return "Done";
+    }
+
+    public String clearRealSensorValues() {
+        cxn = db.connect();
+        String sql = "DELETE FROM route_value_register WHERE timestamp < (NOW() - INTERVAL 6 HOUR)";
+        PreparedStatement stmt;
+        try {
+            stmt = cxn.prepareStatement(sql);
+            int insertedRows = stmt.executeUpdate();
+        } catch (SQLException e) {
+            return "Error in SQL : " + e;
+        }
         db.disconnect();
         return "Done";
     }
