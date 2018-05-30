@@ -47,8 +47,8 @@ public class Scheduler {
         LOGGER.info(this.clearFauxSensorValues());
     }
 
-    // Should run every four hours
-    @Scheduled(cron = "0 0 */4 * * *")
+    // Should run three o clock every day
+    @Scheduled(cron = "0 0 3 * * *")
     public void removeRealSensorValues() {
         LOGGER.info(this.clearRealSensorValues());
     }
@@ -147,7 +147,7 @@ public class Scheduler {
 
     public String clearRealSensorValues() {
         cxn = db.connect();
-        String sql = "DELETE FROM route_value_register WHERE time_stamp < (NOW() - INTERVAL 6 HOUR)";
+        String sql = "DELETE FROM route_value_register WHERE time_stamp < (NOW() - INTERVAL 1 DAY)";
         PreparedStatement stmt;
         try {
             stmt = cxn.prepareStatement(sql);
